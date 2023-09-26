@@ -34,3 +34,38 @@ push 하는 방법: `git push origin 브랜치명`
 
 3. 커밋 메세지는 가능한 한글로 작성하기.
 4. 주석 꼼꼼하게 작성하기.
+
+
+
+
+## 디렉터리 구조 (9월26일 기준)
+```
+├── README.md
+├── app.py   [Flask 기본 앱]
+├── requirements.txt   [Python 라이브러리 구성요소 모음]
+├── static   [Flask에서 Image, CSS, Javascript를 관리하는 디렉터리]
+│   ├── css   [CSS 디렉터리]
+│   │   └── bootstrap   [Bootstrap css 디렉터리]
+│   │       └── bootstrap.min.css   [Bootstrap css 파일] 
+│   └── js   [Javascript 디렉터리]
+│       └── bootstrap   [Bootstrap javascript 디렉터리]
+│           └── bootstrap.bundle.min.js   [Bootstrap javascript 파일]
+├── templates   [Flask에서 html 파일을 관리하는 디렉터리]
+│   ├── admin   [관리자가 접속할 수 있는 디렉터리]
+│   │   └── dashboard.html   [관리자용 대시보드]
+│   └── user   [일반 사용자가 접속할 수 있는 디렉터리]
+│       ├── dashboard.html   [일반 사용자용 대시보드]
+│       ├── signin.html   [로그인 페이지]
+│       └── signup.html   [회원가입 페이지]
+└── views
+    ├── API   [API 작업을 처리하기 위한 디렉터리]
+    │   └── account   [계정 관련 API 처리 디렉터리]
+    │       └── signup_api.py   [회원가입 API 파일]
+    ├── __init__.py   [필요 없어 보이지만, 필요한 파일..]
+    ├── admin   [관리자용 라우팅 디렉터리]
+    │   └── __init__.py   [필요 없어 보이지만, 필요한 파일..]
+    └── user   [사용자용 라우팅 디렉터리]
+        ├── __init__.py   [필요 없어 보이지만, 필요한 파일..]
+        ├── signin_view.py   [로그인 라우팅 파일]
+        └── signup_view.py   [회원가입 라우팅 파일]
+```
