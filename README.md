@@ -28,7 +28,7 @@
     On branch 이준형
     Your branch is up to date with 'origin/이준형'.
     ```
-push 하는 방법: `git push origin 브랜치명`
+    push 하는 방법: `git push origin 브랜치명`
 
 2. [중요]작업 시작하기 전 `git pull origin main` 명령어로 최신 코드 받은 뒤, 시작 (코드 컨플릭트 방지)   
 
