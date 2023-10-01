@@ -29,65 +29,32 @@ body {
     text-align: center;
 }
 
-.button.o {
-    width: 100px;
+.button.option {
+    width: 40px;
     color: #ffffff;
     background: #9cbde1;
-    /*f88379*/
     border: 2px solid #ffffff;
     padding: 10px;
     border-radius: 5px;
-    margin-right: 10px;
+    margin: 5px;
 }
 
-.button.o:hover {
+.button.option:hover {
     background: #233c63;
-    /*e63a00*/
     color: #ffffff;
     cursor: pointer;
 }
 
-.button.o:active {
+.button.option:active {
     background: #233c63;
-    /*e63a00*/
     color: #ffffff;
 }
 
-.button.o:focus {
+.button.option:focus {
     background-color: #233c63;
-    /*e63a00*/
     outline: 0;
 }
 
-.button.x {
-    width: 100px;
-    color: #ffffff;
-    background: #9cbde1;
-    /*f88379*/
-    border: 2px solid #ffffff;
-    padding: 10px;
-    border-radius: 5px;
-    margin-left: 10px;
-}
-
-button.x:hover {
-    background: #233c63;
-    /*e63a00*/
-    color: #ffffff;
-    cursor: pointer;
-}
-
-.button.x:active {
-    background: #e7ddba;
-    /*e68a00*/
-    color: #ffffff;
-}
-
-.button.x:focus {
-    background-color: #233c63;
-    /*e63a00*/
-    outline: 0;
-}
 
 .button.res {
     width: 150px;
@@ -112,7 +79,6 @@ button.x:hover {
 
 .button.res:focus {
     background-color: #3084f4;
-    /**/
     outline: 0;
 }
 
@@ -120,7 +86,6 @@ button.x:hover {
     width: 150px;
     color: #ffffff;
     background: #000000;
-    /*f88379*/
     border: 2px solid #ffffff;
     padding: 10px;
     border-radius: 5px;
@@ -129,20 +94,17 @@ button.x:hover {
 
 .button.restart:hover {
     background: #233c63;
-    /*e63a00*/
     color: #ffffff;
     cursor: pointer;
 }
 
 .button.restart:active {
     background: #233c63;
-    /*e63a00*/
     color: #ffffff;
 }
 
 .button.restart:focus {
     background-color: #233c63;
-    /*e63a00*/
     outline: 0;
 }
 
