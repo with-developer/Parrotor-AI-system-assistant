@@ -1,20 +1,21 @@
 <!doctype html>
 <html lang="en">
     <head>
-    <!-- Required meta tags -->
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+        <!-- Required meta tags -->
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <!-- CSS import section start -->
-    <!-- Bootstrap CSS -->
-    <link href="{{ url_for('static', filename='css/bootstrap/bootstrap.min.css') }}" rel="stylesheet" crossorigin="anonymous">
-    <!-- CSS import section end -->
+        <!-- CSS import section start -->
+        <!-- Bootstrap CSS -->
+        <link href="{{ url_for('static', filename='css/bootstrap/bootstrap.min.css') }}" rel="stylesheet" crossorigin="anonymous">
+        <!-- CSS import section end -->
 
-    <title>Signin - Jirangobie</title>
+        <title>Signin - Jirangobie</title>
     </head>
+    
     <body>
         <h1>로그인 페이지</h1>
-        <form id="signup_form" method="post">
+        <form id="signin_form" method="post">
             <div class="form-group">
                 <label for="user_id">아이디</label>
                 <input type="text" class="form-control" id="user_id" placeholder="Enter id">
@@ -27,6 +28,7 @@
             </div>
         </form>
 
+
         <!-- Javascript import section start -->
         <!-- Bootstrap JS -->
         <script src="{{ url_for('static', filename='js/bootstrap/bootstrap.bundle.min.js') }}" crossorigin="anonymous"></script>
@@ -34,5 +36,43 @@
         <script src="{{ url_for('static', filename='js/jquery/jquery-3.7.1.min.js') }}" crossorigin="anonymous"></script>
         <!-- Javascript import section end -->
 
+        <!-- Javascript function section start -->
+        <script>
+            $(document).ready(function() {
+                $('#signin_form').on('submit', function(event) {
+                    event.preventDefault();
+                    
+                    // Save user information to a variable
+                    var userId = $('#user_id').val();
+                    var userPw = $('#user_pw').val();
+                    
+                    // Send user information to api
+                    $.ajax({
+                        url: '/API/account/signin',
+                        data: JSON.stringify({
+                            user_id: userId,
+                            user_pw: userPw,
+                        }),
+                        contentType: 'application/json;charset=UTF-8',
+                        type: 'POST',
+                        success: function(response) {
+                            console.log(response);
+                            if(response.status === 'success') {
+                                // 로그인이 성공적으로 완료되면 서버에서 받은 토큰을 쿠키에 저장합니다.
+                                document.cookie = "token=" + response.token + ";path=/;samesite=strict";
+                                alert(response.message);
+                                window.location.href = '/dashboard'
+                            } else if(response.status === 'fail') {
+                                alert(response.message);  // 로그인이 실패하면 서버에서 받은 에러 메시지를 띄웁니다.
+                            }
+                        },
+                        error: function(error) {
+                            alert(error.responseJSON.message);  // AJAX 요청 자체가 실패하면 기본 에러 메시지를 띄웁니다.
+                        }
+                    });
+                });
+            });
+        </script>            
+        <!-- Javascript function section end -->
     </body>
 </html>
