@@ -1,0 +1,153 @@
+body {
+    background-color: #FBFAEC;
+    /*#fce3c2*/
+}
+
+.number {
+    margin-top: 20px;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.label {
+    font-size: 150%;
+    font-weight: bold;
+}
+
+.problem {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.problem_img {
+    width: 300px;
+    height: 300px;
+    object-fit: cover;
+}
+
+.answer {
+    text-align: center;
+}
+
+.button.o {
+    width: 100px;
+    color: #ffffff;
+    background: #9cbde1;
+    /*f88379*/
+    border: 2px solid #ffffff;
+    padding: 10px;
+    border-radius: 5px;
+    margin-right: 10px;
+}
+
+.button.o:hover {
+    background: #233c63;
+    /*e63a00*/
+    color: #ffffff;
+    cursor: pointer;
+}
+
+.button.o:active {
+    background: #233c63;
+    /*e63a00*/
+    color: #ffffff;
+}
+
+.button.o:focus {
+    background-color: #233c63;
+    /*e63a00*/
+    outline: 0;
+}
+
+.button.x {
+    width: 100px;
+    color: #ffffff;
+    background: #9cbde1;
+    /*f88379*/
+    border: 2px solid #ffffff;
+    padding: 10px;
+    border-radius: 5px;
+    margin-left: 10px;
+}
+
+button.x:hover {
+    background: #233c63;
+    /*e63a00*/
+    color: #ffffff;
+    cursor: pointer;
+}
+
+.button.x:active {
+    background: #e7ddba;
+    /*e68a00*/
+    color: #ffffff;
+}
+
+.button.x:focus {
+    background-color: #233c63;
+    /*e63a00*/
+    outline: 0;
+}
+
+.button.res {
+    width: 150px;
+    color: #ffffff;
+    background: #79affB;
+    border: 2px solid #ffffff;
+    padding: 10px;
+    border-radius: 5px;
+    margin-right: 10px;
+}
+
+.button.res:hover {
+    background: #3084f4;
+    color: #ffffff;
+    cursor: pointer;
+}
+
+.button.res:active {
+    background: #3084f4;
+    color: #ffffff;
+}
+
+.button.res:focus {
+    background-color: #3084f4;
+    /**/
+    outline: 0;
+}
+
+.button.restart {
+    width: 150px;
+    color: #ffffff;
+    background: #000000;
+    /*f88379*/
+    border: 2px solid #ffffff;
+    padding: 10px;
+    border-radius: 5px;
+    margin-left: 10px;
+}
+
+.button.restart:hover {
+    background: #233c63;
+    /*e63a00*/
+    color: #ffffff;
+    cursor: pointer;
+}
+
+.button.restart:active {
+    background: #233c63;
+    /*e63a00*/
+    color: #ffffff;
+}
+
+.button.restart:focus {
+    background-color: #233c63;
+    /*e63a00*/
+    outline: 0;
+}
+
+.admin {
+    width: 320px;
+    margin: 0 auto;
+    margin-top: 20px;
+}
