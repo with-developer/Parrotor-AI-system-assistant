@@ -1,0 +1,37 @@
+.login {
+    text-align: center;
+    background-color: #f0f0f0;
+}
+
+.login .form {
+    width: 50vw;
+    display: inline-block;
+    margin: 2rem;
+    padding: 2rem;
+    background-color: #fff;
+}
+
+.login .form .form-control {
+    margin: .5rem 0rem 1rem 0rem;
+}
+
+.login .btn-primary {
+    background-color: #233C63;
+    border-color: #233C63;
+}
+
+
+.login .btn-primary:hover {
+    background-color: #1a2d4b;
+    border-color: #1a2d4b;
+}
+
+.login .btn-outline-dark {
+    margin: 1rem .2rem;
+    border-color: #fff;
+    font-size: .9rem;
+}
+
+.login .login_options {
+    display: block;
+}
