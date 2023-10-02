@@ -18,15 +18,48 @@
 
     <script>
         var number_id, problem_id, answer_id;
-        var problem_arr = ['q1.png', 'q2.png', 'q3.png', 'q4.png', 'q5.png', 'qres.png'];
-        var answer_arr = [1, 1, 1, 1, 1];
+        var endNum = 5;
+        var usedImages = [];
+        var lastImage = 'qres.png';
+        var allAnswers = [];
+        var correctAnswers = {
+            1: 'pwd',
+            2: 'ls',
+            3: 'sudo',
+            4: 'cal',
+            5: 'df',
+            6: 'bc',
+            7: 'help',
+            8: 'uname',
+            9: 'factor',
+            10: 'whatis',
+            11: 'mkdir',
+            12: 'who',
+            13: 'gzip',
+            14: 'free',
+            15: 'echo'
+        }
+        var incorrectAnswers = ['sudo', 'cat', 'mkdir', 'rm', 'cd']; //잘못된 답안
+
+        function getRandomImage() {
+            var index = Math.floor(Math.random() * 15) + 1; // 1부터 120까지의 랜덤한 수
+            var imageName = 'q' + index + '.png';
+
+            // 이미 사용된 이미지이면 다시 선택
+            while (usedImages.includes(imageName) || imageName === lastImage) {
+                index = Math.floor(Math.random() * 15) + 1;
+                imageName = 'q' + index + '.png';
+            }
+
+            usedImages.push(imageName);
+            return imageName;
+        }
 
         function init() {
             number_id = document.getElementById("number_id");
             problem_id = document.getElementById("problem_id");
             answer_id = document.getElementById("answer_id");
             startNum = 0;
-            endNum = 5;
             score = 0;
             setProblem();
         }
@@ -34,27 +67,55 @@
         init();
 
         function setProblem() {
-            problem_id.innerHTML = "<img src='./static/img/" + problem_arr[startNum] + "' class='problem_img'>";
+            var imageName = startNum < endNum ? getRandomImage() : lastImage;
+            problem_id.innerHTML = "<img src='./static/img/" + imageName + "' class='problem_img'>";
 
             if (startNum == endNum) {
                 number_id.innerHTML = "<span class='label'>< 결과보기 ></span>";
-                answer_id.innerHTML = "<button type='button' class='button res' onclick='btnResFunc();'>결과보기</button> <button type='button' class='button restart' onclick='history.go(0);'>다시하기</button>";
+                answer_id.innerHTML = "<div class='result-restart-buttons'><button type='button' class='button res' onclick='btnResFunc();'>결과보기</button><button type='button' class='button restart' onclick='history.go(0);'>다시하기</button></div>";
             } else {
                 number_id.innerHTML = "<span class='label'><" + parseInt(startNum + 1) + " ></span>";
                 answer_id.innerHTML = generateAnswerButtons();
             }
         }
 
+
+
+
+
+
         function generateAnswerButtons() {
+            var imageName = usedImages[startNum];
+            var selectedImageIndex = parseInt(imageName.replace('q', '').replace('.png', ''), 10);
+
+            var correctAnswer = correctAnswers[selectedImageIndex];
+            if (correctAnswers.hasOwnProperty(selectedImageIndex)) {
+                var correctAnswer = correctAnswers[selectedImageIndex];
+            } else {
+                console.error('No correct answer for selectedImageIndex: ', selectedImageIndex); // log error if selectedImageIndex is not a key in correctAnswers
+                return ''; // Or handle this case as you see fit
+            }
+
+            allAnswers = [correctAnswer]; // 정답을 첫 번째로 
+
+            // 잘못된 답안을 선별
+            while (allAnswers.length < 5) {
+                var incorrect = incorrectAnswers[Math.floor(Math.random() * incorrectAnswers.length)];
+                if (!allAnswers.includes(incorrect)) allAnswers.push(incorrect); // 이미 선택된 답안이 아니라면 추가
+            }
+
+            //무작위로 섞기
+            allAnswers = allAnswers.sort(() => Math.random() - 0.5);
+
             var buttonsHTML = "";
-            for (var i = 1; i <= 5; i++) {
-                buttonsHTML += "<button type='button' class='button option' onclick='btnFunc(" + i + ");'>" + i + "</button>";
+            for (var i = 0; i < 5; i++) {
+                buttonsHTML += "<span><button type='button' class='button option' onclick='btnFunc(" + (i + 1) + ", \"" + correctAnswer + "\");'>" + (i + 1) + "</button>" + allAnswers[i] + "</span> ";
             }
             return buttonsHTML;
         }
-
-        function btnFunc(selectedOption) {
-            if (answer_arr[startNum] == selectedOption) {
+        function btnFunc(selectedOption, correctAnswer) {
+            var selectedAnswer = allAnswers[selectedOption - 1];
+            if (correctAnswer == selectedAnswer) {
                 score++;
             }
             startNum++;
