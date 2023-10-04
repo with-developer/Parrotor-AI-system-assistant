@@ -19,7 +19,7 @@ def signup_api():
     3. DB에 `name` , `userid` , `userpw` , `approve` , `fail_count` 값을 넣음.: 완료 
         주의사항 1: approve 초기값은 False. 담당자가 승인해줄 경우 True로 변경
         주의사항 2: userpw는  sha256으로 해싱하여 저장: 완료
-        주의사항 3: userpw에 솔트값 추가해야함.: 해야함
+        주의사항 3: userpw에 솔트값 추가해야함.: 완료
         주의사항 4: fail_count는 초기값 0. 로그인 시 패스워드가 틀렸을 경우 1씩 증가하며, 5보다 같거나 클 경우 로그인 제한
     4. Google OTP qrcode 제공
     """
@@ -70,7 +70,6 @@ def signup_api():
         "salt" : salt,
         "fail_count" : 0,
         "approved" : False,
-        "google_otp_issue" : False
     }
     db.account.insert_one(insert_data)
     return jsonify({"status" : "success", "message": "회원가입 요청 완료"}), 201
