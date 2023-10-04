@@ -1,37 +1,54 @@
-.login {
+@font-face {
+    font-family: 'NanumGithicCoding';
+    src: url('/static/fonts/NanumGothicCoding-Bold.ttf') format('truetype'),
+        url('/static/fonts/NanumGothicCoding.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+body {
+    font-family: 'NanumGithicCoding', sans-serif !important;
+}
+
+
+.signin_up {
     text-align: center;
     background-color: #f0f0f0;
 }
 
-.login .form {
+.signin_up .form {
     width: 50vw;
     display: inline-block;
-    margin: 2rem;
+    margin: 3rem 2rem 3rem 2rem;
     padding: 2rem;
     background-color: #fff;
 }
 
-.login .form .form-control {
-    margin: .5rem 0rem 1rem 0rem;
+.signin_up .form .form-control {
+    margin: 1.5rem 0rem 1rem 0rem;
 }
 
-.login .btn-primary {
+.signin_up .btn-primary {
     background-color: #233C63;
     border-color: #233C63;
 }
 
 
-.login .btn-primary:hover {
+.signin_up .btn-primary:hover {
     background-color: #1a2d4b;
     border-color: #1a2d4b;
 }
 
-.login .btn-outline-dark {
+.signin_up .btn-outline-dark {
     margin: 1rem .2rem;
     border-color: #fff;
     font-size: .9rem;
 }
 
-.login .login_options {
+.signin_up .login_options {
     display: block;
+}
+
+.signin_up .terms {
+
 }
