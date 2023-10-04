@@ -1,20 +1,12 @@
 <!doctype html>
 <html lang="en">
   <head>
-    <!-- Required meta tags -->
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-
-    <!-- CSS import section start -->
-    <!-- Bootstrap CSS -->
-    <link href="{{ url_for('static', filename='css/bootstrap/bootstrap.min.css') }}" rel="stylesheet" crossorigin="anonymous">
-    <!-- CSS import section end -->
-
+    {% include '/template/head.html' %}
     <title>Dashboard - Jirangobie</title>
   </head>
   <body>
+    {% include '/template/header.html' %}
     <h1>관리자 대시보드 페이지</h1>
-    
 
     <!-- Javascript import section start -->
     <!-- Bootstrap JS -->
