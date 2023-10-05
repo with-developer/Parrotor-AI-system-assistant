@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        {% include '/template/head.html' %}
+        <title>Dashboard - Jirangobie</title>
+    </head>
+    <body>
+        {% include '/template/header.html' %}
+        <h1>계정 관리</h1>
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>사용자 이름</th>
+                    <th>아이디</th>
+                    <th>패스워드 (Hash)</th>
+                    <th>패스워드 틀린 횟수</th>
+                    <th>회원가입 승인 여부</th>
+                </tr>
+            </thead>
+            <tbody id="usersTable">
+                
+            </tbody>
+        </table>
+
+        <!-- Javascript import section start -->
+        <!-- Bootstrap JS -->
+        <script src="{{ url_for('static', filename='js/bootstrap/bootstrap.bundle.min.js') }}" crossorigin="anonymous"></script>
+        <!-- Jquery JS -->
+        <script src="{{ url_for('static', filename='js/jquery/jquery-3.7.1.min.js') }}" crossorigin="anonymous"></script>
+        <!-- Javascript import section end -->
+        <script>
+            $(document).ready(function() {
+                $.post("/API/account/get-users", function(data) {
+                    console.log(data);
+
+                    // 데이터를 테이블에 삽입
+                    var tableContent = "";
+                    for (var userId in data.users) {
+                        var user = data.users[userId];
+                        tableContent += "<tr>";
+                        tableContent += "<td>" + user.user_name + "</td>";
+                        tableContent += "<td>" + user.user_id + "</td>";
+                        tableContent += "<td>" + user.user_pw + "</td>";
+                        tableContent += "<td>" + user.fail_count + "</td>";
+                        tableContent += "<td>" + (user.approved ? "Yes" : "No") + "</td>";
+                        tableContent += "</tr>";
+                    }
+                    $("#usersTable").html(tableContent);
+
+                }).fail(function() {
+                    console.error("요청에 실패했습니다.");
+                });
+            });
+
+        </script>
+    </body>
+</html>
