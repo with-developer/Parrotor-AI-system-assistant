@@ -38,8 +38,8 @@
                 
             </form>
             <div class="login_options">
-                <button type="button" class="btn btn-outline-dark" onClick="location.href='#'">아이디 찾기</button><span>|</span>
-                <button type="button" class="btn btn-outline-dark" onClick="location.href='#'">비밀번호 찾기</button><span>|</span>
+                <button type="button" class="btn btn-outline-dark" onClick="location.href='/find_id'">아이디 찾기</button><span>|</span>
+                <button type="button" class="btn btn-outline-dark" onClick="location.href='/find_pw'">비밀번호 찾기</button><span>|</span>
                 <button type="button" class="btn btn-outline-dark" onClick="location.href='/signup'">회원가입</button>
             </div>
         </div>
@@ -114,7 +114,7 @@
                             console.log(response);
                             if(response.status === 'success') {
                                 // 로그인이 성공적으로 완료되면 서버에서 받은 토큰을 쿠키에 저장합니다.
-                                document.cookie = "token=" + response.token + ";path=/;samesite=strict";
+                                document.cookie = "access_token=" + response.token + ";path=/;samesite=strict";
                                 alert(response.message);
                                 window.location.href = '/dashboard'
                             } else if(response.status === 'fail') {
