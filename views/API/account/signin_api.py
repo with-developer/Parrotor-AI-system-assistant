@@ -62,8 +62,7 @@ def signin_api():
     jwt_token = jwt.encode({
             'user_name' : existing_user['user_name'],
             'user_id': user_id,
-            'google_otp_auth': False,
-            'authority' : "None",
+            'role' : existing_user['role'],
             'exp': datetime.datetime.utcnow() + datetime.timedelta(hours=1)  # 토큰 유효 기간 설정
         }, SECRET_KEY, algorithm='HS256')
     
