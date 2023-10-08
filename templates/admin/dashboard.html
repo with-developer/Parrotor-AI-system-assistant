@@ -5,14 +5,20 @@
     <title>Dashboard - Jirangobie</title>
   </head>
   <body>
-    {% include '/template/header.html' %}
-    <h1>관리자 대시보드 페이지</h1>
-    <span>Menu</span>
-    <a href="/jiranistrator/manage/user/"> 계정 관리</a>
-
-    <!-- Javascript import section start -->
-    <!-- Bootstrap JS -->
-    <script src="{{ url_for('static', filename='js/bootstrap/bootstrap.bundle.min.js') }}" crossorigin="anonymous"></script>
-    <!-- Javascript import section end -->
+    
+    <div class="sidebar">
+      {% include '/template/sidebar.html' %}
+    </div>
+    
+    <div class="main_grid">
+      <div class="top-content">
+        {% include '/template/header.html' %}
+      </div>
+      <div class="bottom-content">
+        
+      </div>
+      
+    </div>
+    {% include '/template/foot.html' %}
   </body>
 </html>

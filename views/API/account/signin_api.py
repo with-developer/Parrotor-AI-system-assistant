@@ -57,7 +57,9 @@ def signin_api():
 
     # 로그인 성공
     # DB에 저장된 fail_count를 0으로 초기화
-    db.account.update_one({'_id': existing_user['_id']}, {'$set': {'fail_count': 0}})
+    current_time = datetime.datetime.utcnow() + datetime.timedelta(hours=9)
+    current_time = current_time.strftime('%Y-%m-%d %H:%M:%S')
+    db.account.update_one({'_id': existing_user['_id']}, {'$set': {'fail_count': 0, 'lastlogin': current_time}})
     # jwt token 생성
     jwt_token = jwt.encode({
             'user_name' : existing_user['user_name'],

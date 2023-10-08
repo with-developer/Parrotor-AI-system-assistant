@@ -1,6 +1,47 @@
-<nav class="navbar navbar-light bg-light" style="justify-content: center; background-color: #233C63 !important;">
-    <a class="navbar-brand" href="/">
-    <img src="{{ url_for('static', filename='images/logo.png') }}" width="30" height="30" class="d-inline-block align-top" alt="">
-    <span style="color:#fff;">지란고비~!</span>
-    </a>
+<nav class="navbar navbar-expand-lg navbar-light">
+    <div class="container-fluid">
+        
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <span class="navbar-nav me-auto mb-2 mb-lg-0">
+                관리자 대시보드
+            </span>
+            <form class="d-flex">
+                <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
+            </form>
+
+            <div class="dropdown none-dropdown-icon" data-bs-toggle="tooltip" data-bs-placement="bottom" data-boundary="viewport" title="설정">
+                <a class="nav-link dropdown-toggle" id="setting-toggle" role="button" data-bs-toggle="dropdown" data-bs-display="static" aria-expanded="false" style="padding: 0.3rem .7rem;">
+                    <img src="{{ url_for('static', filename='images/icons/icons8-setting-50.png') }}" width="27" height="27" class="d-inline-block align-top" alt="">
+                </a>
+                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="setting-toggle">
+                    <span class="dropdown-item-text sm-text">설정</span>
+                    <li><a class="dropdown-item" href="#">여기는 뭐 들어갈지 미정</a></li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li><a class="dropdown-item" href="#">여기는 뭐 들어갈지 미정</a></li>
+                </ul>
+            </div>
+
+            <div class="dropdown none-dropdown-icon" data-bs-toggle="tooltip" data-bs-placement="bottom" data-boundary="viewport" title="프로필 및 설정">
+                <a class="nav-link dropdown-toggle" id="profile-toggle" role="button" data-bs-toggle="dropdown" data-bs-display="static" aria-expanded="false" style="padding: 0.32rem .7rem;">
+                    <img src="{{ url_for('static', filename='images/icons/icons8-user-60.png') }}" width="30" height="30" class="d-inline-block align-top" alt="">
+                </a>
+                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="profile-toggle">
+                    <span class="dropdown-item-text sm-text">계정</span>
+                    <span class="dropdown-item-text d-flex align-items-center md-text">
+                        <img src="{{ url_for('static', filename='images/icons/icons8-user-60.png') }}" width="40" height="40" class="d-inline-block align-top mr-2" alt="">
+                        <div style="margin-left:.5rem; padding: .5rem 0 .5rem 0rem;">
+                            이준형<br>
+                            weakness
+                        </div>
+                    </span>
+                    <li><a class="dropdown-item" href="#">계정 관리</a></li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li><a class="dropdown-item" href="#">로그아웃</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
 </nav>
