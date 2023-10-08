@@ -70,7 +70,8 @@ def signup_api():
         "salt" : salt,
         "fail_count" : 0,
         "approved" : False,
-        "role" : "user"
+        "role" : "user",
+        "lastlogin" : None
     }
     db.account.insert_one(insert_data)
     return jsonify({"status" : "success", "message": "회원가입 요청 완료"}), 201
