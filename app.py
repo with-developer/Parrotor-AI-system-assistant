@@ -4,11 +4,13 @@ from views.user.signup_view import signup_blueprint
 from views.user.find_id_view import find_id_blueprint
 from views.user.find_pw_view import find_pw_blueprint
 from views.user.dashboard_view import dashboard_blueprint
+from views.user.linux_command_assistant_view import linux_command_assistant_blueprint
 from views.admin.dashboard_view import admin_dashboard_blueprint
 from views.admin.manage.user_view import user_manage_blueprint
 from views.API.account.signup_api import signup_api_blueprint
 from views.API.account.signin_api import signin_api_blueprint
 from views.API.account.get_users_api import get_users_api_blueprint
+from views.API.linux_command_assistant.prompt import prompt_api_blueprint
 
 app = Flask(__name__)
 
@@ -23,6 +25,8 @@ app.register_blueprint(find_id_blueprint)
 app.register_blueprint(find_pw_blueprint)
 # Dashboard Blueprint 경로: /views/user/dashboard_view.py
 app.register_blueprint(dashboard_blueprint)
+# linux_command_assistant Blueprint 경로: /views/user/linux_command_assistant_view.py
+app.register_blueprint(linux_command_assistant_blueprint)
 # Admin Dashboard Blueprint 경로: /views/admin/dashboard_view.py
 app.register_blueprint(admin_dashboard_blueprint)
 # User Manage Blueprint 경로: /views/admin/manage/user_view.py
@@ -36,6 +40,8 @@ app.register_blueprint(signup_api_blueprint)
 app.register_blueprint(signin_api_blueprint)
 # Get Users Blueprint 경로: /views/API/account/get_users_api.py
 app.register_blueprint(get_users_api_blueprint)
+# Prompt API Blueprint 경로: /views/API/linux_command_assistant/prompt.py
+app.register_blueprint(prompt_api_blueprint)
 
 
 # app.py
