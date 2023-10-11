@@ -69,7 +69,10 @@ body {
     border: 2px solid #ffffff;
     padding: 10px;
     border-radius: 5px;
-    margin-right: 10px;
+    margin: 0 auto;
+    /* 가로 방향으로만 자동 마진을 주어 가운데 정렬 */
+    display: block;
+    /* block 요소로 만들어야 margin: 0 auto; 가 적용됨 */
 }
 
 .button.res:hover {
@@ -88,7 +91,9 @@ body {
     outline: 0;
 }
 
-.button.restart {
+
+
+/* .button.restart {
     width: 150px;
     color: #ffffff;
     background: #000000;
@@ -118,7 +123,7 @@ body {
     display: flex;
     justify-content: flex-start;
     padding-left: 300px;
-}
+} */
 
 .admin {
     width: 320px;

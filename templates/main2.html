@@ -42,19 +42,6 @@
         //잘못된 답안
         var incorrectAnswers = ['sudo', 'cat', 'mkdir', 'rm', 'cd'];
 
-        //btnResFunc() 
-        var command1 = "";
-        var correct1 = false;
-        var command2 = "";
-        var correct2 = false;
-        var command3 = "";
-        var correct3 = false;
-        var command4 = "";
-        var correct4 = false;
-        var command5 = "";
-        var correct5 = false;
-
-
         function getRandomImage() {
             var index = Math.floor(Math.random() * 15) + 1; // 1부터 120까지의 랜덤한 수
             var imageName = 'q' + index + '.png';
@@ -79,34 +66,19 @@
 
         init();
 
-        // function setProblem() {
-        //     var imageName = startNum < endNum ? getRandomImage() : lastImage;
-        //     problem_id.innerHTML = "<img src='./static/img/" + imageName + "' class='problem_img'>";
-
-        //     if (startNum == endNum) {
-        //         number_id.innerHTML = "<span class='label'>< 결과보기 ></span>";
-        //         answer_id.innerHTML = "<div class='result-restart-buttons'><button type='button' class='button res' onclick='btnResFunc();'>결과보기</button><button type='button' class='button restart' onclick='history.go(0);'>다시하기</button></div>";
-        //     } else {
-        //         number_id.innerHTML = "<span class='label'><" + parseInt(startNum + 1) + " ></span>";
-        //         answer_id.innerHTML = generateAnswerButtons();
-        //     }
-        // }
         function setProblem() {
             var imageName = startNum < endNum ? getRandomImage() : lastImage;
             problem_id.innerHTML = "<img src='./static/img/" + imageName + "' class='problem_img'>";
 
             if (startNum == endNum) {
                 number_id.innerHTML = "<span class='label'>< 결과보기 ></span>";
-                answer_id.innerHTML = "<div class='result-restart-buttons'><button type='button' class='button res' onclick='btnResFunc();'>결과보기</button><button type='button' class='button restart' onclick='history.go(0);'>다시하기</button></div>";
-            } else {
+                answer_id.innerHTML = "<div class='result-restart-buttons'><button type='button' class='button res' onclick='btnResFunc();'>결과보기</button></div>";
+            }
+            else {
                 number_id.innerHTML = "<span class='label'><" + parseInt(startNum + 1) + " ></span>";
                 answer_id.innerHTML = generateAnswerButtons();
             }
         }
-
-
-
-
 
 
         function generateAnswerButtons() {
@@ -138,41 +110,22 @@
             }
             return buttonsHTML;
         }
+
+
         function btnFunc(selectedOption, correctAnswer) {
             var selectedAnswer = allAnswers[selectedOption - 1];
-            if (correctAnswer == selectedAnswer) {
-                score++;
-            }
-            startNum++;
-            setProblem();
-        }
+            var imageName = usedImages[startNum];
+            var selectedImageIndex = parseInt(imageName.replace('q', '').replace('.png', ''), 10);
 
-        // function btnResFunc() {
-        //     window.location.href = "/submit"; //redirect
-        //     Swal.fire({
-        //         title: '',
-        //         text: '',
-        //         html: "<b>당신의 점수는 " + score + "점입니다.</b>",
-        //         icon: 'success',
-        //         confirmButtonColor: '#d33',
-        //         confirmButtonText: '닫기',
-        //         allowOutsideClick: false
-        //     });
+            var commandName = correctAnswers[selectedImageIndex];  // 이미지 번호를 통해 명령어 이름을 찾습니다.
 
-        // }
-        function btnResFunc() {
+            var isCorrect = (correctAnswer == selectedAnswer);
+
             var dataToSend = {
-                "command1": command1,
-                "correct1": correct1,
-                "command2": command2,
-                "correct2": correct2,
-                "command3": command3,
-                "correct3": correct3,
-                "command4": command4,
-                "correct4": correct4,
-                "command5": command5,
-                "correct5": correct5,
+                "command": commandName,  // 이전에는 이미지 번호였지만, 이제는 커맨드 이름을 보냅니다.
+                "correct": isCorrect
             };
+
             fetch('/submit', {
                 method: 'POST',
                 headers: {
@@ -183,24 +136,35 @@
                 return response.json();
             }).then(data => {
                 if (data.status == "success") {
-                    Swal.fire({
-                        title: '',
-                        text: '',
-                        html: "<b>당신의 점수는 " + score + "점입니다.</b>",
-                        icon: 'success',
-                        confirmButtonColor: '#d33',
-                        confirmButtonText: '닫기',
-                        allowOutsideClick: false
-                    });
+                    if (isCorrect) {
+                        score++;
+                    }
+                    startNum++;
+                    setProblem();
                 } else {
-                    // 실패 메시지 
+                    // 여기에 실패 시 처리 로직을 추가하세요.
                 }
             }).catch(error => {
                 console.error(error);
             });
-
-
         }
+
+
+        function btnResFunc() {
+            Swal.fire({
+                title: '',
+                text: '',
+                html: "<b>당신의 점수는 " + score + "점입니다.</b>",
+                icon: 'success',
+                confirmButtonColor: '#d33',
+                confirmButtonText: '닫기',
+                allowOutsideClick: false
+            });
+        }
+
+
+
+
     </script>
 </body>
 
