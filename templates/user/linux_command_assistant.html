@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    {% include '/template/head.html' %}
+    <title>Dashboard - Jirangobie</title>
+    <style>
+      .user-message {
+          text-align: right;
+          margin: 5px;
+          padding: 5px;
+          border-radius: 5px;
+          background-color: #e6f7ff;
+      }
+      .bot-message {
+          text-align: left;
+          margin: 5px;
+          padding: 5px;
+          border-radius: 5px;
+          background-color: #f2f2f2;
+      }
+  </style>
+  </head>
+  <body>
+    
+    <div class="sidebar">
+      {% include '/template/user_sidebar.html' %}
+    </div>
+    
+    <div class="main_grid">
+      <div class="top-content">
+        {% include '/template/header.html' %}
+      </div>
+      <div class="bottom-content" style="display: flex;">
+        <div class="shadow-sm p-3 mb-5 bg-body rounded" style="margin: 1rem 1rem 0 2rem !important; height: 86vh; width: 50%;">
+          <div chat-history style="height: 74vh; overflow: scroll; font-size: 14px;">
+            
+          </div>
+          <div class="form-floating mb-3" style="display: flex; margin-top:1rem;">
+            <textarea class="form-control" id="prompt-textarea" placeholder="Send a message" tabindex="0" rows="1" data-id="request-:r22:-3" style="resize: none; max-height: 200px; height: 40px; overflow-y: hidden; padding-top:.55rem; margin-right: .3rem;"></textarea>
+            <button type="button" class="btn btn-primary" id="sendButton">send</button>
+          </div>
+        </div>
+
+
+        <div class="shadow-sm p-3 mb-5 bg-body rounded" style="margin: 1rem 2rem 0 1rem; height: 95%; width: 50%;">
+          <div chat-history style="height: 92%;">
+            여기에는 터미널이 들어갈 예정
+          </div>
+        </div>
+
+      </div>
+      
+    </div>
+    {% include '/template/foot.html' %}
+    <script>
+      $(document).ready(function() {
+          $('#prompt-textarea').on('keydown', function(event) {
+              if (event.which === 13) {
+                  if (event.shiftKey) {
+                      return true;
+                  } else {
+                      event.preventDefault();
+                      sendMessage();
+                  }
+              }
+          });
+  
+          $("#sendButton").on("click", function() {
+              sendMessage();
+          });
+  
+          function sendMessage() {
+              const message = $('#prompt-textarea').val().trim();
+              if (!message) {
+                  return;
+              }
+  
+              const chatHistoryDiv = document.querySelector("[chat-history]");
+              const userMsgDiv = document.createElement("div");
+              userMsgDiv.className = "user-message";
+              userMsgDiv.innerText = message;
+              chatHistoryDiv.append(userMsgDiv);
+  
+              const botMsgDiv = document.createElement("div");
+              botMsgDiv.className = "bot-message";
+              chatHistoryDiv.append(botMsgDiv);
+  
+              fetch('/API/prompt', {
+                  method: 'POST',
+                  headers: {
+                      'Content-Type': 'application/json'
+                  },
+                  body: JSON.stringify({
+                      message: message
+                  })
+              })
+              .then(response => {
+                  const reader = response.body.getReader();
+                  const decoder = new TextDecoder();
+  
+                  function stream() {
+                    reader.read().then(({ done, value }) => {
+                        if (done) {
+                            return;
+                        }
+                        const chunk = decoder.decode(value)
+                            .replace(/data: /g, '')
+                            .replace(/\n{2}/g, '\n');
+
+                        if (chunk) {
+                            const decodedMessage = chunk.split(",").map(code => String.fromCharCode(code)).join("");
+                            botMsgDiv.innerText += decodedMessage;
+                        }
+                        stream();
+                    });
+                }
+                stream();
+              })
+              .catch(error => {
+                  console.error("Error:", error);
+              });
+  
+              $('#prompt-textarea').val('');
+          }
+      });
+    </script>
+  </body>
+</html>
