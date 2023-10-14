@@ -19,6 +19,7 @@
           background-color: #f2f2f2;
       }
   </style>
+  <link rel="stylesheet" href="https://unpkg.com/xterm@4.11.0/css/xterm.css"/>
   </head>
   <body>
     
@@ -31,98 +32,218 @@
         {% include '/template/header.html' %}
       </div>
       <div class="bottom-content" style="display: flex;">
+        <!-- Prompt HTML Section Start -->
         <div class="shadow-sm p-3 mb-5 bg-body rounded" style="margin: 1rem 1rem 0 2rem !important; height: 86vh; width: 50%;">
-          <div chat-history style="height: 74vh; overflow: scroll; font-size: 14px;">
-            
-          </div>
+          <div chat-history style="height: 74vh; overflow: scroll; font-size: 14px;"></div>
           <div class="form-floating mb-3" style="display: flex; margin-top:1rem;">
             <textarea class="form-control" id="prompt-textarea" placeholder="Send a message" tabindex="0" rows="1" data-id="request-:r22:-3" style="resize: none; max-height: 200px; height: 40px; overflow-y: hidden; padding-top:.55rem; margin-right: .3rem;"></textarea>
             <button type="button" class="btn btn-primary" id="sendButton">send</button>
           </div>
         </div>
+        <!-- Prompt HTML Section End -->
 
-
-        <div class="shadow-sm p-3 mb-5 bg-body rounded" style="margin: 1rem 2rem 0 1rem; height: 95%; width: 50%;">
-          <div chat-history style="height: 92%;">
-            여기에는 터미널이 들어갈 예정
+        <!-- Terminal HTML Section Start -->
+        <div class="shadow-sm bg-body rounded" style="margin: 1rem 2rem 0 1rem; height: 95%; width: 50%;">
+          <div style="height: 92%;">
+            <span style="font-size: small"
+              >status:
+              <span style="font-size: small" id="status">connecting...</span></span
+            >
+            <div style="width: 100%; height: 82%" id="terminal"></div>
           </div>
         </div>
+        <!-- Terminal HTML Section End -->
 
       </div>
       
     </div>
     {% include '/template/foot.html' %}
-    <script>
-      $(document).ready(function() {
-          $('#prompt-textarea').on('keydown', function(event) {
-              if (event.which === 13) {
-                  if (event.shiftKey) {
-                      return true;
-                  } else {
-                      event.preventDefault();
-                      sendMessage();
-                  }
-              }
-          });
-  
-          $("#sendButton").on("click", function() {
-              sendMessage();
-          });
-  
-          function sendMessage() {
-              const message = $('#prompt-textarea').val().trim();
-              if (!message) {
-                  return;
-              }
-  
-              const chatHistoryDiv = document.querySelector("[chat-history]");
-              const userMsgDiv = document.createElement("div");
-              userMsgDiv.className = "user-message";
-              userMsgDiv.innerText = message;
-              chatHistoryDiv.append(userMsgDiv);
-  
-              const botMsgDiv = document.createElement("div");
-              botMsgDiv.className = "bot-message";
-              chatHistoryDiv.append(botMsgDiv);
-  
-              fetch('/API/prompt', {
-                  method: 'POST',
-                  headers: {
-                      'Content-Type': 'application/json'
-                  },
-                  body: JSON.stringify({
-                      message: message
-                  })
-              })
-              .then(response => {
-                  const reader = response.body.getReader();
-                  const decoder = new TextDecoder();
-  
-                  function stream() {
-                    reader.read().then(({ done, value }) => {
-                        if (done) {
-                            return;
-                        }
-                        const chunk = decoder.decode(value)
-                            .replace(/data: /g, '')
-                            .replace(/\n{2}/g, '\n');
+    <!-- xterm.js & socket javascript library -->
+    <script src="https://unpkg.com/xterm@4.11.0/lib/xterm.js"></script>
+    <script src="https://unpkg.com/xterm-addon-fit@0.5.0/lib/xterm-addon-fit.js"></script>
+    <script src="https://unpkg.com/xterm-addon-web-links@0.4.0/lib/xterm-addon-web-links.js"></script>
+    <script src="https://unpkg.com/xterm-addon-search@0.8.0/lib/xterm-addon-search.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.min.js"></script>
 
-                        if (chunk) {
-                            const decodedMessage = chunk.split(",").map(code => String.fromCharCode(code)).join("");
-                            botMsgDiv.innerText += decodedMessage;
-                        }
-                        stream();
-                    });
+
+    <script>
+    // Prompt javascript section start
+    $(document).ready(function() {
+        $('#prompt-textarea').on('keydown', function(event) {
+            if (event.which === 13) {
+                if (event.shiftKey) {
+                    return true;
+                } else {
+                    event.preventDefault();
+                    sendMessage();
                 }
-                stream();
-              })
-              .catch(error => {
-                  console.error("Error:", error);
-              });
-  
-              $('#prompt-textarea').val('');
-          }
-      });
+            }
+        });
+
+        $("#sendButton").on("click", function() {
+            sendMessage();
+        });
+
+        function sendMessage() {
+            const message = $('#prompt-textarea').val().trim();
+            if (!message) {
+                return;
+            }
+
+            const chatHistoryDiv = document.querySelector("[chat-history]");
+            const userMsgDiv = document.createElement("div");
+            userMsgDiv.className = "user-message";
+            userMsgDiv.innerText = message;
+            chatHistoryDiv.append(userMsgDiv);
+
+            const botMsgDiv = document.createElement("div");
+            botMsgDiv.className = "bot-message";
+            chatHistoryDiv.append(botMsgDiv);
+
+            fetch('/API/prompt', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    message: message
+                })
+            })
+            .then(handleAPIResponse)
+            .then(response => {
+                const reader = response.body.getReader();
+                const decoder = new TextDecoder();
+
+                function stream() {
+                  reader.read().then(({ done, value }) => {
+                      if (done) {
+                          return;
+                      }
+                      const chunk = decoder.decode(value)
+                          .replace(/data: /g, '')
+                          .replace(/\n{2}/g, '\n');
+
+                      if (chunk) {
+                          const decodedMessage = chunk.split(",").map(code => String.fromCharCode(code)).join("");
+                          botMsgDiv.innerText += decodedMessage;
+                      }
+                      stream();
+                  });
+              }
+              stream();
+            })
+            .catch(error => {
+                console.error("Error:", error);
+            });
+
+            $('#prompt-textarea').val('');
+        }
+    });
+    // Prompt javascript section end
+
+
+  // Terminal javascript section start
+    const term = new Terminal({
+      cursorBlink: true,
+      macOptionIsMeta: true,
+      scrollback: true,
+      fontSize: 12,
+    });
+    term.attachCustomKeyEventHandler(customKeyEventHandler);
+
+    const fit = new FitAddon.FitAddon();
+    term.loadAddon(fit);
+    term.loadAddon(new WebLinksAddon.WebLinksAddon());
+    term.loadAddon(new SearchAddon.SearchAddon());
+
+    term.open(document.getElementById("terminal"));
+    fit.fit();
+    term.resize(14, 82);
+    console.log(`size: ${term.cols} columns, ${term.rows} rows`);
+    fit.fit();
+    term.writeln("You can copy with ctrl+shift+x");
+    term.writeln("You can paste with ctrl+shift+v");
+    
+    term.onData((data) => {
+      console.log("browser terminal received new data:", data);
+      socket.emit("pty-input", { input: data });
+    });
+
+    const socket = io.connect("/API/terminal/pty");
+    const status = document.getElementById("status");
+
+    
+    socket.on("pty-output", function (data) {
+      console.log("new output received from server:", data.output);
+      term.write(data.output);
+    });
+    
+
+
+    socket.on("connect", () => {
+      fitToscreen();
+      status.innerHTML =
+        '<span style="background-color: lightgreen;">connected</span>';
+    });
+
+    socket.on("disconnect", () => {
+      status.innerHTML =
+        '<span style="background-color: #ff8383;">disconnected</span>';
+    });
+
+    function fitToscreen() {
+      fit.fit();
+      const dims = { cols: term.cols, rows: term.rows };
+      console.log("sending new dimensions to server's pty", dims);
+      socket.emit("resize", dims);
+      socket.emit("pty-init","")
+
+    }
+
+    function debounce(func, wait_ms) {
+      let timeout;
+      return function (...args) {
+        const context = this;
+        clearTimeout(timeout);
+        timeout = setTimeout(() => func.apply(context, args), wait_ms);
+      };
+    }
+
+    /**
+     * Handle copy and paste events
+     */
+    function customKeyEventHandler(e) {
+      if (e.type !== "keydown") {
+        return true;
+      }
+      if (e.ctrlKey && e.shiftKey) {
+        const key = e.key.toLowerCase();
+        if (key === "v") {
+          // ctrl+shift+v: paste whatever is in the clipboard
+          navigator.clipboard.readText().then((toPaste) => {
+            term.writeText(toPaste);
+          });
+          return false;
+        } else if (key === "c" || key === "x") {
+          // ctrl+shift+x: copy whatever is highlighted to clipboard
+
+          // 'x' is used as an alternate to 'c' because ctrl+c is taken
+          // by the terminal (SIGINT) and ctrl+shift+c is taken by the browser
+          // (open devtools).
+          // I'm not aware of ctrl+shift+x being used by anything in the terminal
+          // or browser
+          const toCopy = term.getSelection();
+          navigator.clipboard.writeText(toCopy);
+          term.focus();
+          return false;
+        }
+      }
+      return true;
+    }
+
+    const wait_ms = 50;
+    window.onresize = debounce(fitToscreen, wait_ms);
+    // Terminal javascript section end
     </script>
   </body>
 </html>

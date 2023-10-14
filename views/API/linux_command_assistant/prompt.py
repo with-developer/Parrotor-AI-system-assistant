@@ -13,6 +13,7 @@ prompt_api_blueprint = Blueprint('prompt_api', __name__, url_prefix='/API/prompt
 
 # This Route: /API/prompt/
 @prompt_api_blueprint.route('', methods=['POST'])
+@check_verification(['user','admin'])
 def prompt_api():
     """TODO
     1. 전송된 데이터를 수신
