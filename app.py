@@ -1,4 +1,5 @@
 from flask import Flask, render_template, jsonify, request, session, redirect, url_for, current_app
+from socket_instance import socketio
 from views.user.signin_view import signin_blueprint
 from views.user.signup_view import signup_blueprint
 from views.user.find_id_view import find_id_blueprint
@@ -11,8 +12,11 @@ from views.API.account.signup_api import signup_api_blueprint
 from views.API.account.signin_api import signin_api_blueprint
 from views.API.account.get_users_api import get_users_api_blueprint
 from views.API.linux_command_assistant.prompt import prompt_api_blueprint
+from views.API.linux_command_assistant.terminal import terminal_socket_blueprint
+from config import app
 
 app = Flask(__name__)
+socketio.init_app(app)
 
 """ Default view blueprint """
 # Signin Blueprint 경로: /views/user/signin_view.py
@@ -43,7 +47,9 @@ app.register_blueprint(get_users_api_blueprint)
 # Prompt API Blueprint 경로: /views/API/linux_command_assistant/prompt.py
 app.register_blueprint(prompt_api_blueprint)
 
+app.register_blueprint(terminal_socket_blueprint)
+
 
 # app.py
 if __name__ == '__main__':
-    app.run(host="0.0.0.0", port=5009, debug=True)
+    socketio.run(app, host="0.0.0.0", port=5009, debug=True)
