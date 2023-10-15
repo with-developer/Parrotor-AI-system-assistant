@@ -1,0 +1,220 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        {% include '/template/head.html' %}
+        <title>Dashboard - Jirangobie</title>
+    </head>
+    <body>
+    
+        <div class="sidebar">
+            {% include '/template/admin_sidebar.html' %}
+        </div>
+        
+        <div class="main_grid">
+            <div class="top-content">
+                {% include '/template/header.html' %}
+            </div>
+            <div class="bottom-content">
+                <!-- Remote Server Info Section Start -->
+                <div class="shadow-sm p-3 mb-5 bg-body rounded" style="margin: 1rem 2rem 0 2rem; ">
+                    <table class="table caption-top">
+                        <caption>Remote Server data table</caption>
+                        <thead>
+                            <tr style="font-size: 15px;">
+                                <th scope="col">#</th>
+                                <th>서버 이름</th>
+                                <th>보안 수준</th>
+                                <th>접근 권한</th>
+                                <th>운영체제</th>
+                                <th>버전</th>
+                                <th>IP 주소</th>
+                                <th>저장된 스크립트</th>
+                                <th>마지막 점검일</th>
+                            </tr>
+                        </thead>
+                        <tbody id="usersTable" class="table-group-divider" style="font-size: small;">
+                            
+                        </tbody>
+                    </table>
+                    <div style="display: flex; justify-content: space-between;">
+                        <div class="pagination-info" style="font-size:13px; color:#696969; margin-top:.3rem;">Showing <span id="startEntry">0</span> to <span id="endEntry">0</span> of <span id="totalEntries">0</span> entries</div>
+                        <div class="pagination" style="margin-right: .4rem;"></div>
+                    </div>
+                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#add-Remote-Server" style="border-radius: unset;">Add remote server</button>
+                </div>
+                <!-- Remote Server Info Section End -->
+            </div>
+        </div>
+
+        <!-- Add Remote Server Modal Section Start -->
+        <div class="modal fade" id="add-Remote-Server" tabindex="-1" aria-labelledby="add-Remote-Server" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="add-Remote-Server-Title-Label">Add remote server</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form>
+                            <div class="">
+                                <label class="col-form-label">서버 이름</label>
+                                <input type="text" class="form-control" id="server_name">
+                            </div>
+                            <div class="">
+                                <label class="col-form-label">접근 권한</label>
+                                <input type="text" class="form-control" id="access_role">
+                            </div>
+                            <div class="">
+                                <label class="col-form-label">IP 주소</label>
+                                <input type="text" class="form-control" id="server_ip">
+                            </div>
+                            <div class="">
+                                <label class="col-form-label">SSH 계정명</label>
+                                <input type="text" class="form-control" id="username">
+                            </div>
+                            <div class="">
+                                <label class="col-form-label">패스워드</label>
+                                <input type="text" class="form-control" id="password">
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" id="connectButton" class="btn btn-primary">Connect</button>
+                    </div>
+                </div>
+                <!-- Loading... Spinner Start -->
+                <div id="overlay" style="display:none; position:absolute; top:0; left:0; width:100%; height:100%; background-color: rgba(0, 0, 0, 0.5); z-index:1000;"></div>
+                    <div class="spinner-border text-primary" role="status" id="loadingSpinner" style="display:none; position:absolute; top:50%; left:50%; transform:translate(-50%, -50%); z-index:2000;">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+                <!-- Loading... Spinner End -->
+            </div>
+        </div>
+        <!-- Add Remote Server Modal Section End -->
+        
+        {% include '/template/foot.html' %}
+        <script>
+            function createPaginationButtons(totalPages, currentPage) {
+                let buttons = '<nav aria-label="Page navigation"><ul class="pagination pagination-sm">';
+
+                // 이전 페이지 버튼
+                if (currentPage > 1) {
+                    buttons += `<li class="page-item"><a href="#" class="page-link prev" data-page="${currentPage - 1}">Previous</a></li>`;
+                } else {
+                    buttons += `<li class="page-item disabled"><a class="page-link" href="#" tabindex="-1" aria-disabled="true">Previous</a></li>`;
+                }
+
+                // 페이지 번호 버튼
+                for (let i = 1; i <= totalPages; i++) {
+                    if (i === currentPage) {
+                        buttons += `<li class="page-item active" aria-current="page"><a href="#" class="page-link page-number" data-page="${i}">${i}</a></li>`;
+                    } else {
+                        buttons += `<li class="page-item"><a href="#" class="page-link page-number" data-page="${i}">${i}</a></li>`;
+                    }
+                }
+
+                // 다음 페이지 버튼
+                if (currentPage < totalPages) {
+                    buttons += `<li class="page-item"><a href="#" class="page-link next" data-page="${currentPage + 1}">Next</a></li>`;
+                } else {
+                    buttons += `<li class="page-item disabled"><a class="page-link" href="#" tabindex="-1" aria-disabled="true">Next</a></li>`;
+                }
+
+                buttons += '</ul></nav>';
+
+                $(".pagination").html(buttons);
+            }
+
+            $(document).ready(function() {
+                var items_per_page = 10;
+                function loadPage(pageNumber) {
+                    $.post("/API/remote/get-servers", { page: pageNumber }, function(data) {
+                        console.log(data);
+
+                        var tableContent = "";
+                        var index = 1 + (pageNumber - 1) * 10;
+                        for (var serverId in data.servers) {
+                            var server = data.servers[serverId];
+                            tableContent += "<tr>";
+                            tableContent += "<td>" + index + "</td>";
+                            tableContent += "<td>" + server.server_name + "</td>";
+                            tableContent += "<td>" + server.security_score + "</td>";
+                            tableContent += "<td>" + server.access_role + "</td>";
+                            tableContent += "<td>" + server.os + "</td>";
+                            tableContent += "<td>" + server.version + "</td>";
+                            tableContent += "<td>" + server.ip_address + "</td>";
+                            tableContent += "<td>" + server.saved_script + "</td>";
+                            tableContent += "<td>" + server.last_scan + "</td>";                        
+                            tableContent += "</tr>";
+                            index++;
+                        }
+                        var startEntry = (pageNumber - 1) * items_per_page + 1;
+                        var endEntry = Math.min(pageNumber * items_per_page, data.total_servers);
+                        $("#startEntry").text(startEntry);
+                        $("#endEntry").text(endEntry);
+                        $("#totalEntries").text(data.total_servers);
+                        $("#usersTable").html(tableContent);
+                        createPaginationButtons(data.total_pages, pageNumber);
+
+                    }).fail(function() {
+                        console.error("요청에 실패했습니다.");
+                    });
+                }loadPage(1); // 초기 페이지 로딩
+
+                // 페이지네비게이션 버튼 클릭 이벤트
+                $(document).on("click", ".page-number, .prev, .next", function(e) {
+                    e.preventDefault();
+                    const pageNumber = $(this).data("page");
+                    loadPage(pageNumber);
+                });
+            });
+
+
+        // add remote server modal js
+        $(document).ready(function () {
+            document.getElementById("connectButton").addEventListener("click", function (e) { // 'e'를 매개변수로 추가
+                e.preventDefault(); // Prevent the default form submit action
+
+                var serverName = $('#server_name').val();
+                var accessRole = $('#access_role').val();
+                var serverIp = $('#server_ip').val();
+                var userName = $('#username').val();
+                var password = $('#password').val();
+
+                $('#loadingSpinner').show();
+                $('#overlay').show();
+
+                $.ajax({
+                    type: "POST",
+                    url: "/API/remote/add-remote-server",
+                    data: {
+                        server_name: serverName,
+                        access_role: accessRole,
+                        server_ip: serverIp,
+                        username: userName,
+                        password: password
+                    },
+                    success: function (response) {
+                        $("#loadingSpinner").hide();
+                        $('#overlay').hide();
+                        console.log(response);
+
+                        if (response['status'] == 'success') {
+                            alert(response['message']);
+                        } else {
+                            alert('Error: ' + response['message']);
+                        }
+                    },
+                    error: function (error) {
+                        // Handle error
+                        $("#loadingSpinner").hide();
+                        $('#overlay').hide();
+                        alert('Error')
+                    }
+                });
+            });
+        });
+        </script>
+    </body>
+</html>
