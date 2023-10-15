@@ -109,7 +109,6 @@
                     message: message
                 })
             })
-            .then(handleAPIResponse)
             .then(response => {
                 const reader = response.body.getReader();
                 const decoder = new TextDecoder();
