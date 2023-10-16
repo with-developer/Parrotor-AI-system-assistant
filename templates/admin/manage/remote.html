@@ -69,12 +69,16 @@
                                 <input type="text" class="form-control" id="server_ip">
                             </div>
                             <div class="">
+                                <label class="col-form-label">포트 번호</label>
+                                <input type="text" class="form-control" id="server_port">
+                            </div>
+                            <div class="">
                                 <label class="col-form-label">SSH 계정명</label>
                                 <input type="text" class="form-control" id="username">
                             </div>
                             <div class="">
                                 <label class="col-form-label">패스워드</label>
-                                <input type="text" class="form-control" id="password">
+                                <input type="password" class="form-control" id="password">
                             </div>
                         </form>
                     </div>
@@ -179,6 +183,7 @@
                 var serverName = $('#server_name').val();
                 var accessRole = $('#access_role').val();
                 var serverIp = $('#server_ip').val();
+                var serverPort =$('#server_port').val();
                 var userName = $('#username').val();
                 var password = $('#password').val();
 
@@ -192,6 +197,7 @@
                         server_name: serverName,
                         access_role: accessRole,
                         server_ip: serverIp,
+                        server_port:serverPort,
                         username: userName,
                         password: password
                     },
