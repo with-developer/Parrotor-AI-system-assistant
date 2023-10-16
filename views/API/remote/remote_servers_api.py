@@ -1,8 +1,6 @@
 from flask import Blueprint, request, jsonify
 from ..db_utils import mongodb_connect
-import re
-import os
-import base64
+import paramiko
 from ...API.account.account_verification_api import check_verification
 
 
@@ -28,9 +26,9 @@ def get_servers():
             'server_name': server_info['server_name'],
             'security_score': server_info['security_score'],
             'access_role': server_info['access_role'],
-            'os': server_info['os'],
-            'version': server_info['version'],
-            'ip_address' : server_info['ip_address'],
+            'os': server_info['server_info']['id'],
+            'version': server_info['server_info']['version'],
+            'ip_address' : server_info['server_ip'],
             'saved_script' : server_info['saved_script'],
             'last_scan' : server_info['last_scan'],
         }
@@ -50,5 +48,67 @@ def add_remote_server():
     4. 성공시 DB에 값들 저장
     4.1. 실패시 해당 에러 반환
     """
+    # Get ajax form
+    server_name = request.form.get('server_name')
+    access_role = request.form.get('access_role')
+    server_ip = request.form.get('server_ip')
+    server_port = request.form.get('server_port')
+    username = request.form.get('username')
+    password = request.form.get('password')
+
+    # 각 변수마다 검증 로직이 필요함. ip의 경우 정규표현식, 포트번호 int 맞는지
+
+    # SSH 클라이언트 객체 생성
+    client = paramiko.SSHClient()
+    client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+
+    try:
+        # 원격 서버에 접속
+        client.connect(server_ip, port=server_port, username=username, password=password)
+    except Exception as e:
+        return jsonify({"status" : "fail", "message" : "원격 서버에 접속할 수 없습니다."})
+
+    # 원격 서버에서 실행할 명령
+    command = "cat /etc/os-release"
+    stdin, stdout, stderr = client.exec_command(command)
+
+    # 결과 가져오기
+    result = [item.strip() for item in stdout.readlines()[:6]]
+    result_err = stderr.readlines()
+
+    # 접속 종료
+    client.close()
+
+    if result_err:
+        print("[!] SSH exec command error:", result_err)
+        return jsonify({"status" : "fail", "message" : "서버에 연결했지만, 정보를 가져올 수 없습니다."})
+
+    def extract_value(data, index):
+        try:
+            return data[index].split('=')[1].strip('"')
+        except Exception:
+            return "unknown"
+
+    insert_data = {
+        "server_name" : server_name,
+        "access_role" : access_role,
+        "server_ip" : server_ip,
+        "server_port" : int(server_port),
+        "username" : username,
+        "password" : server_port,
+        "security_score" : "unknown",
+        "saved_script" : "not saved",
+        "last_scan" : "not yet",
+        "server_info" : {
+            "name" : extract_value(result, 0),
+            "version" : extract_value(result, 1),
+            "id" : extract_value(result, 2),
+            "id_like" : extract_value(result, 3),
+            "pretty_name" : extract_value(result, 4),
+            "version_id" : extract_value(result, 5),
+            }
+    }
+    db.remote.insert_one(insert_data)
+
 
     return jsonify({"status" : "success", "message": "원격 서버 추가 성공"}), 201
