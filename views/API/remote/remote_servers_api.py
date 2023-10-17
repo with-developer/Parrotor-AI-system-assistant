@@ -34,9 +34,24 @@ def get_servers():
         }
     print("servers:",filtered_servers)
 
-    return jsonify({"status" : "success", "message": "원격 서버 조회 성공", "servers": filtered_servers, "total_pages": total_pages, "total_servers": total_servers}), 201
+    # 사용자 권한 가져오기
+    role_data = db.user_role.find()
+    roles = [roles['role'] for roles in role_data][0]
 
-# This Route: /API/remote/get-servers
+
+    return jsonify({"status" : "success", "message": "원격 서버 조회 성공", "servers": filtered_servers, "total_pages": total_pages, "total_servers": total_servers, "roles" : roles}), 201
+
+# This Route: /API/remote/get-servers-name
+@remote_api_blueprint.route('/get-servers-name', methods=['GET'])
+@check_verification(['admin', 'user'])
+def get_servers_name():
+    """TODO
+    1. 현재 사용자 권한에 해당하는 서버 이름만 리턴해주기
+    """
+    pass
+    
+
+# This Route: /API/remote/add-remote-server
 @remote_api_blueprint.route('/add-remote-server', methods=['POST'])
 @check_verification(['admin'])
 def add_remote_server():
@@ -48,13 +63,14 @@ def add_remote_server():
     4. 성공시 DB에 값들 저장
     4.1. 실패시 해당 에러 반환
     """
-    # Get ajax form
-    server_name = request.form.get('server_name')
-    access_role = request.form.get('access_role')
-    server_ip = request.form.get('server_ip')
-    server_port = request.form.get('server_port')
-    username = request.form.get('username')
-    password = request.form.get('password')
+    # Get ajax json
+    server_name = request.json.get('server_name')
+    access_role = request.json.get('access_role')
+    print(access_role)
+    server_ip = request.json.get('server_ip')
+    server_port = request.json.get('server_port')
+    username = request.json.get('username')
+    password = request.json.get('password')
 
     # 각 변수마다 검증 로직이 필요함. ip의 경우 정규표현식, 포트번호 int 맞는지
 
