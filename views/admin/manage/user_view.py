@@ -7,4 +7,4 @@ user_manage_blueprint = Blueprint('user_manage', __name__, url_prefix='/jiranist
 @user_manage_blueprint.route('/', methods=['GET', 'POST'])
 @check_verification(['admin'])
 def user_manage():
-    return render_template('admin/manage/user.html')
+    return render_template('admin/manage/user.html', page_title="관리자/계정관리")

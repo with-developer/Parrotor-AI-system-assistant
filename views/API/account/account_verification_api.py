@@ -1,8 +1,9 @@
 import jwt
 import os
 from functools import wraps
-from flask import request, jsonify, render_template
+from flask import request, render_template
 from dotenv import load_dotenv
+from flask import g
 
 load_dotenv(verbose=True)
 SECRET_KEY = os.getenv('SECRET_KEY')
@@ -27,6 +28,7 @@ def check_verification(required_roles):
                 print(request.referrer)
                 return render_template('alert_and_redirect.html', message="권한이 없습니다.", redirect_url=request.referrer or "/")
             
+            g.user_role = current_user_role
             return f(*args, **kwargs)
         return decorated_function
     return decorator
