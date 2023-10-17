@@ -1,1 +1,126 @@
-Find_pw
+<!doctype html>
+<html lang="en">
+    <head>
+        <!-- Required meta tags -->
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <!-- CSS import section start -->
+        <!-- main CSS -->
+        <link href="{{ url_for('static', filename='css/find.css') }}" rel="stylesheet" crossorigin="anonymous">
+        <!-- Bootstrap CSS -->
+        <link href="{{ url_for('static', filename='css/bootstrap/bootstrap.min.css') }}" rel="stylesheet" crossorigin="anonymous">
+        <!-- CSS import section end -->
+
+        <title>Signin - Jirangobi</title>
+    </head>
+    
+    <body class="signin_up" style="display: unset;">
+        <nav class="navbar navbar-light bg-light" style="justify-content: center; background-color: #233C63 !important;">
+            <a class="navbar-brand" href="/">
+            <img src="{{ url_for('static', filename='images/logo.png') }}" width="30" height="30" class="d-inline-block align-top" alt="">
+            <span style="color:#fff;">지란고비~!</span>
+            </a>
+        </nav>
+        <!-- find_pw 수정한 부분 -->
+        <div class="form shadow-sm p-3 mb-5 bg-white rounded">
+            <h2 style="margin-bottom: 2rem;">Forgot PW?</h2>
+            <p>Forgotten your PW? Enter your ID and email address below, and we'll email your PW.</p>
+            <form id="signin_form" method="post">
+                <div class="form-group">
+                    <input type="text" class="form-control" id="user_id" placeholder="Enter your ID.">
+                    <input type="text" class="form-control" id="user_name" placeholder="Enter your name">
+                </div>
+                <div class="button-container">
+                    <button type="button" class="btn btn-cancel btn-lg" style="width: 48%;">Cancel</button>
+                    <button type="submit" class="btn btn-primary btn-lg" style="width: 48%;">Submit</button>
+                </div>                               
+            </form>
+        </div>
+        <!-- find_pw 수정한 부분 -->
+        
+
+        <footer class="bg-light text-center text-lg-start">
+            <!-- Grid container -->
+            <div class="container p-4">
+              <!--Grid row-->
+              <div class="row">
+                <!--Grid column-->
+                <div class="col-lg-6 col-md-12 mb-4 mb-md-0">
+                  <h5 class="text-uppercase">안녕하세요</h5>
+          
+                  <p>
+                    안녕하세요
+                  </p>
+                </div>
+                <!--Grid column-->
+          
+                <!--Grid column-->
+                <div class="col-lg-6 col-md-12 mb-4 mb-md-0">
+                  <h5 class="text-uppercase">안녕하세요</h5>
+          
+                  <p>
+                    안녕하세요
+                  </p>
+                </div>
+                <!--Grid column-->
+              </div>
+              <!--Grid row-->
+            </div>
+            <!-- Grid container -->
+          
+            <!-- Copyright -->
+            <div class="text-center p-3" style="background-color: rgba(0, 0, 0, 0.2);">
+              © 2023 Copyright:
+              <a class="text-dark" href="#">Team Jirangobie</a>
+            </div>
+            <!-- Copyright -->
+          </footer>
+
+
+        <!-- Javascript import section start -->
+        <!-- Bootstrap JS -->
+        <script src="{{ url_for('static', filename='js/bootstrap/bootstrap.bundle.min.js') }}" crossorigin="anonymous"></script>
+        <!-- Jquery JS -->
+        <script src="{{ url_for('static', filename='js/jquery/jquery-3.7.1.min.js') }}" crossorigin="anonymous"></script>
+        <!-- Javascript import section end -->
+
+        <!-- Javascript function section start -->
+        <script>
+            $(document).ready(function() {
+                $('#signin_form').on('submit', function(event) {
+                    event.preventDefault();
+                    
+                    // Save user information to a variable
+                    var userId = $('#user_id').val();
+                    var userName = $('#user_name').val();
+                    
+                    // Send user information to api
+                    $.ajax({
+                        url: '/API/find_pw',
+                        data: JSON.stringify({
+                            user_id: userId,
+                            user_name: userName,
+                        }),
+                        contentType: 'application/json;charset=UTF-8',
+                        type: 'POST',
+                        success: function(response) {
+                            console.log(response);
+                            if(response.status === 'success') {
+                                alert("비밀번호 변경 요청을 관리자에게 보냈습니다. 확인 후 연락 드리겠습니다.");
+                            }
+                        },
+                        error: function(error) {
+                            if (error.responseJSON && error.responseJSON.message) {
+                                alert(error.responseJSON.message);
+                            } else {
+                                alert("An unknown error occurred.");
+                            }
+                        }
+                    });
+                });
+            });
+        </script>            
+        <!-- Javascript function section end -->
+    </body>
+</html>
