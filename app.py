@@ -12,11 +12,12 @@ from views.admin.manage.remote_view import remote_servers_blueprint
 from views.API.account.signup_api import signup_api_blueprint
 from views.API.account.signin_api import signin_api_blueprint
 from views.API.account.get_users_api import get_users_api_blueprint
+from views.API.find_id_api import find_id_api_blueprint
+from views.API.find_pw_api import find_pw_api_blueprint
 from views.API.linux_command_assistant.prompt import prompt_api_blueprint
 from views.API.linux_command_assistant.terminal import terminal_socket_blueprint
 from views.API.remote.remote_servers_api import remote_api_blueprint
 from config import app
-
 app = Flask(__name__)
 socketio.init_app(app)
 
@@ -48,6 +49,12 @@ app.register_blueprint(signup_api_blueprint)
 app.register_blueprint(signin_api_blueprint)
 # Get Users Blueprint 경로: /views/API/account/get_users_api.py
 app.register_blueprint(get_users_api_blueprint)
+
+# Find_id Blueprint 경로: /views/API/find_id_api.py
+app.register_blueprint(find_id_api_blueprint)
+# Find_pw Blueprint 경로: /views/API/find_pw_api.py
+app.register_blueprint(find_pw_api_blueprint)
+
 # Prompt API Blueprint 경로: /views/API/linux_command_assistant/prompt.py
 app.register_blueprint(prompt_api_blueprint)
 
