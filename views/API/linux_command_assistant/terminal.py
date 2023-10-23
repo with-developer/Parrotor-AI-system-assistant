@@ -3,17 +3,42 @@ from config import app as global_app
 from socket_instance import socketio
 from ...API.account.account_verification_api import check_verification
 import paramiko
-import termios
-import struct
-import fcntl
+import os
 
 
 terminal_socket_blueprint = Blueprint('terminal_socket', __name__, url_prefix='/API/terminal')
 
-def set_winsize(fd, row, col, xpix=0, ypix=0):
-    print("setting window size with termios")
-    winsize = struct.pack("HHHH", row, col, xpix, ypix)
-    fcntl.ioctl(fd, termios.TIOCSWINSZ, winsize)
+
+
+try:
+    import termios
+    import fcntl
+    import struct
+
+    def set_winsize(fd, row, col, xpix=0, ypix=0):
+        print("setting window size with termios")
+        winsize = struct.pack("HHHH", row, col, xpix, ypix)
+        fcntl.ioctl(fd, termios.TIOCSWINSZ, winsize)
+
+except ImportError:
+    # For Windows
+    try:
+        import win32console
+        import win32con
+
+        def set_winsize(fd, row, col, xpix=0, ypix=0):
+            console = win32console.GetConsoleScreenBufferInfo().srWindow
+            console.Top = console.Left = 0
+            console.Bottom = row - 1
+            console.Right = col - 1
+            win32console.SetConsoleScreenBufferSize(console)
+
+    except ImportError:
+        print("Unable to import win32console. Please install pywin32.")
+
+        def set_winsize(fd, row, col, xpix=0, ypix=0):
+            print("set_winsize not implemented for this platform")
+
 
 
 def read_and_forward_ssh_output():
