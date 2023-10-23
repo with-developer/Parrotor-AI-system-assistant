@@ -44,12 +44,21 @@
 
         <!-- Terminal HTML Section Start -->
         <div class="shadow-sm bg-body rounded" style="margin: 1rem 2rem 0 1rem; height: 95%; width: 50%;">
-          <div style="height: 92%;">
-            <span style="font-size: small"
-              >status:
-              <span style="font-size: small" id="status">connecting...</span></span
-            >
-            <div style="width: 100%; height: 82%" id="terminal"></div>
+          <div style="height: 86%;">
+            
+              <button class="btn btn-sm btn-primary dropdown-toggle" style="font-size: .67rem;" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                Select remote server
+              </button>
+              <ul class="dropdown-menu">
+                <li><a class="dropdown-item" href="#">Action</a></li>
+                <li><a class="dropdown-item" href="#">Another action</a></li>
+                <li><a class="dropdown-item" href="#">Something else here</a></li>
+              </ul>
+
+            <span style="font-size: small">status:
+              <span style="font-size: small" id="status">connecting...</span>
+            </span>
+            <div style="width: 100%; height: 80.5%" id="terminal"></div>
           </div>
         </div>
         <!-- Terminal HTML Section End -->

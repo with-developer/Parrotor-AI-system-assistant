@@ -54,19 +54,27 @@
                         <h5 class="modal-title" id="add-Remote-Server-Title-Label">Add remote server</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
-                    <div class="modal-body">
-                        <form>
+                    <form>
+                        <div class="modal-body">
                             <div class="">
                                 <label class="col-form-label">서버 이름</label>
                                 <input type="text" class="form-control" id="server_name">
                             </div>
                             <div class="">
                                 <label class="col-form-label">접근 권한</label>
-                                <input type="text" class="form-control" id="access_role">
+                                <div class="form-check">
+                                    <div id="access_role" class="form-check">
+                                        
+                                    </div>
+                                </div>
                             </div>
                             <div class="">
                                 <label class="col-form-label">IP 주소</label>
                                 <input type="text" class="form-control" id="server_ip">
+                            </div>
+                            <div class="">
+                                <label class="col-form-label">포트 번호</label>
+                                <input type="text" class="form-control" id="server_port">
                             </div>
                             <div class="">
                                 <label class="col-form-label">SSH 계정명</label>
@@ -74,14 +82,14 @@
                             </div>
                             <div class="">
                                 <label class="col-form-label">패스워드</label>
-                                <input type="text" class="form-control" id="password">
+                                <input type="password" class="form-control" id="password">
                             </div>
-                        </form>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                        <button type="submit" id="connectButton" class="btn btn-primary">Connect</button>
-                    </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            <button type="submit" id="connectButton" class="btn btn-primary">Connect</button>
+                        </div>
+                    </form>
                 </div>
                 <!-- Loading... Spinner Start -->
                 <div id="overlay" style="display:none; position:absolute; top:0; left:0; width:100%; height:100%; background-color: rgba(0, 0, 0, 0.5); z-index:1000;"></div>
@@ -157,6 +165,18 @@
                         $("#usersTable").html(tableContent);
                         createPaginationButtons(data.total_pages, pageNumber);
 
+                        // roles 정보를 체크박스로 생성
+                        var rolesContent = "";
+                        for (var i = 0; i < data.roles.length; i++) {
+                            rolesContent += `<div class="form-check">`;
+                            rolesContent += `<input class="form-check-input" type="checkbox" value="${data.roles[i]}" id="role_${data.roles[i]}">`;
+                            rolesContent += `<label class="form-check-label" for="role_${data.roles[i]}">${data.roles[i]}</label>`;
+                            rolesContent += `</div>`;
+                        }
+                        console.log(data.roles);
+                        $('#access_role').html(rolesContent);
+
+
                     }).fail(function() {
                         console.error("요청에 실패했습니다.");
                     });
@@ -177,10 +197,17 @@
                 e.preventDefault(); // Prevent the default form submit action
 
                 var serverName = $('#server_name').val();
-                var accessRole = $('#access_role').val();
+                var accessRole = [];
+                $("#access_role .form-check-input:checked").each(function () {
+                    accessRole.push($(this).val());
+                });
+                console.log(accessRole)
                 var serverIp = $('#server_ip').val();
+                var serverPort =$('#server_port').val();
                 var userName = $('#username').val();
                 var password = $('#password').val();
+                
+                
 
                 $('#loadingSpinner').show();
                 $('#overlay').show();
@@ -188,13 +215,15 @@
                 $.ajax({
                     type: "POST",
                     url: "/API/remote/add-remote-server",
-                    data: {
+                    contentType: "application/json", // JSON으로 전송할 것임을 명시
+                    data: JSON.stringify({  // 객체를 JSON 문자열로 변환
                         server_name: serverName,
-                        access_role: accessRole,
+                        access_role: accessRole,  // 체크된 권한들을 배열로 전송
                         server_ip: serverIp,
+                        server_port: serverPort,
                         username: userName,
                         password: password
-                    },
+                    }),
                     success: function (response) {
                         $("#loadingSpinner").hide();
                         $('#overlay').hide();
