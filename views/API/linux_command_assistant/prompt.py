@@ -1,6 +1,7 @@
 import os
 import openai
-from flask import Blueprint, render_template, request, Response, jsonify, stream_with_context
+import datetime
+from flask import Blueprint, render_template, request, Response, jsonify, stream_with_context, g
 from ..db_utils import mongodb_connect
 from ...API.account.account_verification_api import check_verification
 from dotenv import load_dotenv
@@ -8,6 +9,8 @@ from dotenv import load_dotenv
 load_dotenv(verbose=True)
 openai_api_key = os.getenv('openai_api_key')
 openai.api_key = openai_api_key
+
+db = mongodb_connect()
 
 prompt_api_blueprint = Blueprint('prompt_api', __name__, url_prefix='/API/prompt')
 
@@ -23,6 +26,7 @@ def prompt_api():
     data = request.json
     message = data.get("message", "")
     print("message:", message)
+    
 
     messages = [
         {"role": "system", "content": "You are a useful Linux system engineer."},
@@ -30,6 +34,7 @@ def prompt_api():
     ]
 
     def generate():
+        total_answer = ""
         try:
             response = openai.ChatCompletion.create(
                 model='gpt-3.5-turbo',
@@ -40,9 +45,20 @@ def prompt_api():
             for chunk in response:
                 answer = chunk.get('choices', [{}])[0].get('delta', {}).get('content', "")
                 ascii_answer = ",".join(str(ord(char)) for char in answer)
-                print(ascii_answer)
+                total_answer += answer
                 yield f"data: {ascii_answer}\n\n"
         except Exception as e:
             yield f"data: error: {str(e)}\n\n"
+        db.log.insert_one(
+            {
+                "log_type": "Linux Command Assistant",
+                "user_id": g.user_id,
+                "question" : message,
+                "answer" : total_answer,
+                "time" : (datetime.datetime.utcnow() + datetime.timedelta(hours=9)).strftime('%Y-%m-%d %H:%M:%S')
+            }
+        )
+        
 
+    
     return Response(stream_with_context(generate()), content_type='text/event-stream')
