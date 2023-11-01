@@ -50,15 +50,12 @@
                 Select remote server
               </button>
               <ul class="dropdown-menu">
-                <li><a class="dropdown-item" href="#">Action</a></li>
-                <li><a class="dropdown-item" href="#">Another action</a></li>
-                <li><a class="dropdown-item" href="#">Something else here</a></li>
               </ul>
 
             <span style="font-size: small">status:
-              <span style="font-size: small" id="status">connecting...</span>
+              <span style="font-size: small" id="status">Select the server with the button left.</span>
             </span>
-            <div style="width: 100%; height: 80.5%" id="terminal"></div>
+            <div style="width: 100%; height: 90%" id="terminal"></div>
           </div>
         </div>
         <!-- Terminal HTML Section End -->
@@ -77,6 +74,57 @@
 
     <script>
     // Prompt javascript section start
+    function addMessage(type, text) {
+      const chatHistoryDiv = document.querySelector("[chat-history]");
+      const messageDiv = document.createElement("div");
+      messageDiv.style.display = "flex";
+      messageDiv.style.borderRadius = "5px"
+
+
+
+      if (type === "user") {
+        messageDiv.style.backgroundColor = "#e6f7ff";
+        messageDiv.style.justifyContent = "right";
+        messageDiv.style.margin = "0 0 5px 0";
+        const userIcon = document.createElement("img");
+        userIcon.src = "{{ url_for('static', filename='images/icons/icons8-user-60.png') }}"; // 봇 아이콘 이미지 파일 경로
+        userIcon.alt = "User Icon";
+        userIcon.width = "32";
+        userIcon.height = "32";
+        userIcon.style.alignSelf = "baseline";
+        userIcon.style.marginTop = "3px";
+        userIcon.style.marginRight = "5px";
+        const messageTextDiv = document.createElement("div");
+        messageTextDiv.className = "user-message";
+        messageTextDiv.innerText = text;
+        messageDiv.appendChild(messageTextDiv);
+        messageDiv.appendChild(userIcon);
+        
+      } else if (type === "bot") {
+        messageDiv.style.backgroundColor = "#f2f2f2";
+        messageDiv.style.margin = "0 0 5px 0";
+        const botIcon = document.createElement("img");
+        botIcon.src = "{{ url_for('static', filename='images/logo3.png') }}"; // 봇 아이콘 이미지 파일 경로
+        botIcon.alt = "Bot Icon";
+        botIcon.className = "message-icon";
+        botIcon.width = "32";
+        botIcon.height = "32";
+        botIcon.style.alignSelf = "baseline";
+        botIcon.style.marginTop = "3px";
+        botIcon.style.marginLeft = "5px";
+        messageDiv.appendChild(botIcon);
+        const messageTextDiv = document.createElement("div");
+        messageTextDiv.className = "bot-message";
+        messageTextDiv.innerText = text;
+        messageDiv.appendChild(messageTextDiv);
+      }
+
+      
+
+      chatHistoryDiv.appendChild(messageDiv);
+    }
+
+
     $(document).ready(function() {
         $('#prompt-textarea').on('keydown', function(event) {
             if (event.which === 13) {
@@ -89,25 +137,40 @@
             }
         });
 
+        
+
         $("#sendButton").on("click", function() {
             sendMessage();
         });
-
+        
         function sendMessage() {
             const message = $('#prompt-textarea').val().trim();
             if (!message) {
                 return;
             }
 
+            addMessage("user", message);
             const chatHistoryDiv = document.querySelector("[chat-history]");
-            const userMsgDiv = document.createElement("div");
-            userMsgDiv.className = "user-message";
-            userMsgDiv.innerText = message;
-            chatHistoryDiv.append(userMsgDiv);
+            const messageDiv = document.createElement("div");
+            messageDiv.style.display = "flex";
+            messageDiv.style.borderRadius = "5px"
+            messageDiv.style.backgroundColor = "#f2f2f2";
+            messageDiv.style.margin = "0 0 5px 0";
+            const botIcon = document.createElement("img");
+            botIcon.src = "{{ url_for('static', filename='images/logo3.png') }}"; // 봇 아이콘 이미지 파일 경로
+            botIcon.alt = "Bot Icon";
+            botIcon.className = "message-icon";
+            botIcon.width = "32";
+            botIcon.height = "32";
+            botIcon.style.alignSelf = "baseline";
+            botIcon.style.marginTop = "3px";
+            messageDiv.appendChild(botIcon);
+            const messageTextDiv = document.createElement("div");
+            messageTextDiv.className = "bot-message";
 
-            const botMsgDiv = document.createElement("div");
-            botMsgDiv.className = "bot-message";
-            chatHistoryDiv.append(botMsgDiv);
+            messageDiv.appendChild(messageTextDiv);
+
+            chatHistoryDiv.appendChild(messageDiv);
 
             fetch('/API/prompt', {
                 method: 'POST',
@@ -125,7 +188,15 @@
                 function stream() {
                   reader.read().then(({ done, value }) => {
                       if (done) {
-                          return;
+                        console.log("done!");
+                        const hasCodeBlock = messageTextDiv.innerText.includes("```");
+                        if (hasCodeBlock){
+                          console.log("find code block!");
+                          console.log(hasCodeBlock);
+                          const codeContent = messageTextDiv.innerText.replace(/```([\s\S]+?)```/g, '</p><pre><code>$1</code></pre><p>');
+                            messageTextDiv.innerHTML = `<p>${codeContent}</p>`
+                        }
+                        return;
                       }
                       const chunk = decoder.decode(value)
                           .replace(/data: /g, '')
@@ -133,7 +204,7 @@
 
                       if (chunk) {
                           const decodedMessage = chunk.split(",").map(code => String.fromCharCode(code)).join("");
-                          botMsgDiv.innerText += decodedMessage;
+                          messageTextDiv.innerText += decodedMessage;
                       }
                       stream();
                   });
@@ -147,6 +218,9 @@
             $('#prompt-textarea').val('');
         }
     });
+
+    
+    addMessage("bot", "안녕하세요, 저는 당신의 리눅스 명령어 어시스턴트 Parrotor입니다. \n무엇을 도와드릴까요?");
     // Prompt javascript section end
 
 
@@ -167,10 +241,10 @@
     term.open(document.getElementById("terminal"));
     fit.fit();
     term.resize(14, 82);
-    console.log(`size: ${term.cols} columns, ${term.rows} rows`);
+    // console.log(`size: ${term.cols} columns, ${term.rows} rows`);
     fit.fit();
-    term.writeln("You can copy with ctrl+shift+x");
-    term.writeln("You can paste with ctrl+shift+v");
+    term.writeln("1. You can copy with ctrl+shift+x");
+    term.writeln("2. You can paste with ctrl+shift+v");
     
     term.onData((data) => {
       console.log("browser terminal received new data:", data);
@@ -181,17 +255,16 @@
     const status = document.getElementById("status");
 
     
+
+    
     socket.on("pty-output", function (data) {
       console.log("new output received from server:", data.output);
       term.write(data.output);
     });
     
 
-
     socket.on("connect", () => {
       fitToscreen();
-      status.innerHTML =
-        '<span style="background-color: lightgreen;">connected</span>';
     });
 
     socket.on("disconnect", () => {
@@ -204,9 +277,19 @@
       const dims = { cols: term.cols, rows: term.rows };
       console.log("sending new dimensions to server's pty", dims);
       socket.emit("resize", dims);
-      socket.emit("pty-init","")
+      // socket.emit("pty-init","");
 
     }
+
+    function connect_server(serverId,serverName) {
+      term.clear();
+      term.reset();
+      const test_val = serverId; // 선택한 서버의 ID를 전달
+      socket.emit("connect-server", test_val);
+      status.innerHTML = '<span style="background-color: lightgreen;">' + serverName +' is connected</span>';
+    }
+
+
 
     function debounce(func, wait_ms) {
       let timeout;
@@ -252,6 +335,52 @@
     const wait_ms = 50;
     window.onresize = debounce(fitToscreen, wait_ms);
     // Terminal javascript section end
+
+    function fetchAndDisplayServerNames() {
+      $.get("/API/remote/get-servers-name", function (data) {
+        if (data.status === "success") {
+          const serverList = data.servers;
+          const serverDropdown = $(".dropdown-menu");
+
+          // 서버 목록 순회하며 각 서버의 이름을 리스트에 추가
+          for (const serverId in serverList) {
+            const server = serverList[serverId];
+            const serverName = server.server_name;
+
+            // li 태그를 생성하고 리스트에 추가
+            const listItem = $("<li>");
+            const link = $("<a>").addClass("dropdown-item").attr("href", "#");
+            link.text(serverName);
+            listItem.append(link);
+
+            // hidden input 요소를 생성하여 ID 값을 저장
+            const hiddenInput = $("<input>")
+              .attr("type", "hidden")
+              .attr("name", "server-id")
+              .val(serverId);
+            listItem.append(hiddenInput);
+
+            serverDropdown.append(listItem);
+
+            // 클릭 이벤트를 처리하여 서버 이름을 선택하면 해당 서버로 연결하도록 구현
+            link.click(function () {
+              // 선택한 서버의 ID 값을 가져옴
+              const selectedServerId = listItem.find('input[name="server-id"]').val();
+
+              // 선택한 서버로 연결하는 함수 호출
+              connect_server(selectedServerId,serverName);
+            });
+          }
+        } else {
+          console.error("Failed to fetch server names.");
+        }
+      });
+    }
+
+    // 페이지 로드 시 서버 이름을 가져와 리스트에 추가
+    $(document).ready(function () {
+      fetchAndDisplayServerNames();
+    });
     </script>
   </body>
 </html>
