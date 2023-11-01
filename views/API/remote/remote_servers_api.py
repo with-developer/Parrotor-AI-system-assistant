@@ -1,4 +1,4 @@
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, request, jsonify, g
 from ..db_utils import mongodb_connect
 import paramiko
 from ...API.account.account_verification_api import check_verification
@@ -43,12 +43,26 @@ def get_servers():
 
 # This Route: /API/remote/get-servers-name
 @remote_api_blueprint.route('/get-servers-name', methods=['GET'])
-@check_verification(['admin', 'user'])
+@check_verification(['user', 'admin'])
 def get_servers_name():
-    """TODO
-    1. 현재 사용자 권한에 해당하는 서버 이름만 리턴해주기
-    """
-    pass
+
+    print(g.user_role)
+    # if role이 admin이라면 모든 서버 다 출력, 아니라면 해당 권한에 맞는 서버만 출력
+    if g.user_role == 'admin':
+        servers = {server['_id']: server for server in db.remote.find()}
+    else:
+        servers = {server['_id']: server for server in db.remote.find({"access_role" : g.user_role })}
+
+    filtered_servers = {}
+    for server_id, server_info in servers.items():
+        filtered_servers[str(server_id)] = {
+            'id': str(server_info["_id"]),
+            'server_name': server_info['server_name']
+        }
+    print("servers:",filtered_servers)
+
+
+    return jsonify({"status" : "success", "message": "원격 서버 조회 성공", "servers": filtered_servers}), 201
     
 
 # This Route: /API/remote/add-remote-server
