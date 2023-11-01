@@ -87,3 +87,44 @@ main {
 
 .fw-semibold { font-weight: 600; }
 .lh-tight { line-height: 1.25; }
+
+
+.sidebar-toggle{
+  position: absolute;
+  top: 10%;
+  right: -12px;
+  transform: translateY(-50%) rotate(180deg);
+  background-color: #212529;
+  color: var(--sidebar-color);
+  border-radius: 50%;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  cursor: pointer;
+  transition: var(--tran-05);
+}
+
+.sidebar-custom {
+  width: 280px;
+  height: 100%;
+  position:relative;
+
+}
+
+.sidebar-custom.close {
+  width:80px;
+}
+
+.sidebar-custom-text.close {
+  display: none;
+}
+
+/* .sidebar-custom .nav{
+  position: fixed;
+  top:13%
+}
+
+.sidebar-custom .dropdown {
+  position: fixed;
+  bottom:10%
+} */
