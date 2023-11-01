@@ -1,73 +1,53 @@
-<div class="d-flex flex-column flex-shrink-0 p-3 text-white bg-dark" style="width: 280px; height: 100%;">
+<div class="d-flex flex-column flex-shrink-0 p-3 text-white bg-dark sidebar-custom">
     <a href="/" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-white text-decoration-none">
         <img src="{{ url_for('static', filename='images/logo.png') }}" width="32" height="32"
             class="d-inline-block align-middle" alt="">
-        <span class="fs-4" style="margin-left:1rem;">Parator</span>
+        <span class="fs-4 sidebar-custom-text" style="margin-left:1rem;">Parrotor</span>
     </a>
+    <i class='bx bx-chevron-right sidebar-toggle'></i>
     <hr>
     <ul class="nav nav-pills flex-column mb-auto">
-        <li class="nav-item">
-            <a href="#" class="nav-link active" aria-current="page">
-                <img src="{{ url_for('static', filename='images/icons/icons8-home-50.png') }}" width="16" height="16"
-                    class="d-inline-block align-middle" alt="">
-                Home
-            </a>
-        </li>
+        
+
         <li>
-            <a href="../dashboard" class="nav-link text-white">
+            <a href="../dashboard/" class="nav-link text-white">
                 <img src="{{ url_for('static', filename='images/icons/icons8-dashboard-50.png') }}" width="16"
                     height="16" class="d-inline-block align-middle" alt="">
-                Dashboard
+                <span class="sidebar-custom-text">Dashboard</span>
             </a>
         </li>
         <li>
-            <a href="../linux_command_assistant" class="nav-link text-white">
-                <img src="{{ url_for('static', filename='images/icons/icons8-user-60-white.png') }}" width="16"
+            <a href="../linux_command_assistant/" class="nav-link text-white">
+                <img src="{{ url_for('static', filename='images/icons/icons8-linux-50.png') }}" width="16"
                     height="16" class="d-inline-block align-middle" alt="">
-                Linux command assistant
+                <span class="sidebar-custom-text">Linux Command Assistant</span>
             </a>
         </li>
         <li>
-            <a href="#" class="nav-link text-white">
-                <img src="{{ url_for('static', filename='images/icons/icons8-user-60-white.png') }}" width="16"
+            <a href="../security_level_assessment/" class="nav-link text-white">
+                <img src="{{ url_for('static', filename='images/icons/icons8-security-configuration-50.png') }}" width="16"
                     height="16" class="d-inline-block align-middle" alt="">
-                Test 1
-            </a>
-        </li>
-        <li>
-            <a href="#" class="nav-link text-white">
-                <img src="{{ url_for('static', filename='images/icons/icons8-user-60-white.png') }}" width="16"
-                    height="16" class="d-inline-block align-middle" alt="">
-                Test 2
+                <span class="sidebar-custom-text">Linux Security Assistant</span>
             </a>
         </li>
         {% if is_admin %}
 
         <li>
-            <a href="/jiranistrator/dashboard" class="nav-link text-white">
-                <img src="{{ url_for('static', filename='images/icons/icons8-user-60-white.png') }}" width="16"
+            <a href="/jiranistrator/dashboard/" class="nav-link text-white" style="position: fixed; bottom:12%;">
+                <img src="{{ url_for('static', filename='images/icons/icons8-admin-50.png') }}" width="16"
                     height="16" class="d-inline-block align-middle" alt="">
-                Admin Page
+                <span class="sidebar-custom-text">Admin Page</span>
             </a>
         </li>
         {% endif %}
+        <li>
+            <a href="#" class="nav-link text-white" style="position: fixed; bottom:7%;">
+                <img src="{{ url_for('static', filename='images/icons/icons8-logout-50.png') }}" width="16"
+                    height="16" class="d-inline-block align-middle" alt="">
+                <span class="sidebar-custom-text">Logout</span>
+            </a>
+        </li>
     </ul>
     <hr>
-    <div class="dropdown">
-        <a href="#" class="d-flex align-items-center text-white text-decoration-none dropdown-toggle" id="dropdownUser1"
-            data-bs-toggle="dropdown" aria-expanded="false">
-            <img src="{{ url_for('static', filename='images/icons/icons8-user-60-white.png') }}" width="32"
-                    height="32" class="d-inline-block align-middle" alt="">
-            <strong>weakness</strong>
-        </a>
-        <ul class="dropdown-menu dropdown-menu-dark text-small shadow" aria-labelledby="dropdownUser1">
-            <li><a class="dropdown-item" href="#">New project...</a></li>
-            <li><a class="dropdown-item" href="#">Settings</a></li>
-            <li><a class="dropdown-item" href="#">Profile</a></li>
-            <li>
-                <hr class="dropdown-divider">
-            </li>
-            <li><a class="dropdown-item" href="#">Sign out</a></li>
-        </ul>
-    </div>
+    
 </div>
