@@ -110,23 +110,17 @@
             .then(response => response.json())
             .then(data => {
                 if (data.violation) {
-                    showAlert('Policy Violation detected'); // 정책 위반 시 경고창
+                    // 정책 위반 시 경고창을 띄움
+                    showAlert('Policy Violation detected');
                 }
-                displayGPTResponse(data.gpt_response); // GPT-3의 응답 메시지 표시
+                // GPT-3의 응답과 상관없이 sendMessage 호출
+                sendMessage();
             })
             .catch(error => {
                 console.error("Error: ", error);
                 showAlert('Error occurred'); // 오류 발생 시 경고창
             });
         }
-
-        function displayGPTResponse(response) {
-            const botMsgDiv = document.createElement("div");
-            botMsgDiv.className = "bot-message";
-            botMsgDiv.innerText = response;
-            document.querySelector("[chat-history]").append(botMsgDiv);
-        }
-
 
 
         function sendMessage() {
