@@ -19,6 +19,8 @@ def check_verification(required_roles):
             try:
                 decoded_token = jwt.decode(token, SECRET_KEY, algorithms=['HS256'])
                 current_user_role = decoded_token.get('role', None)
+                current_user_id = decoded_token.get('user_id', None)
+                current_user_name = decoded_token.get('user_name', None)
             except jwt.ExpiredSignatureError:
                 return render_template('alert_and_redirect.html', message="토큰이 만료되었습니다.", redirect_url="/")
             except jwt.InvalidTokenError:
@@ -29,6 +31,8 @@ def check_verification(required_roles):
                 return render_template('alert_and_redirect.html', message="권한이 없습니다.", redirect_url=request.referrer or "/")
             
             g.user_role = current_user_role
+            g.user_id = current_user_id
+            g.user_name = current_user_name
             return f(*args, **kwargs)
         return decorated_function
     return decorator

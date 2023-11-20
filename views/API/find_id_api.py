@@ -10,7 +10,7 @@ db = mongodb_connect()
 load_dotenv(verbose=True)
 SECRET_KEY = os.getenv('SECRET_KEY')
 
-#This is Route: /API/account/find_id
+#This is Route: /API/find_id
 @find_id_api_blueprint.route('/', methods=['POST'])
 def find_id_api():
     """ TODO
@@ -29,7 +29,6 @@ def find_id_api():
 
     # 사용자가 존재하는 경우
     user_id = user_info.get('user_id')
-    print(user_id)
     
     # user_id의 첫 3자만 가져오고 나머지는 *로 변환
     masked_user_id = user_id[:3] + '*'*(len(user_id)-3)
