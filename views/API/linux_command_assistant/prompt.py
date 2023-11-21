@@ -1,6 +1,8 @@
 import os
 import openai
 import datetime
+import time
+from bson.objectid import ObjectId
 from flask import Blueprint, render_template, request, Response, jsonify, stream_with_context, g
 from ..db_utils import mongodb_connect
 from ...API.account.account_verification_api import check_verification
@@ -25,12 +27,42 @@ def prompt_api():
     """
     data = request.json
     message = data.get("message", "")
+    serverId = data.get("serverId", "")
     print("message:", message)
+    print("server id:",serverId)
+
     
+
+    """TODO
+    if none이면 그대로 실행
+    값이 있다면 db에서 server info 불러와서 포함
+    """
+    if serverId != "None":
+        server_id_like = db.remote.find_one({'_id': ObjectId(serverId)})['server_info']['id_like']
+        server_pretty_name = db.remote.find_one({'_id': ObjectId(serverId)})['server_info']['pretty_name']
+        prompt_content = f"""
+server info: {server_id_like} {server_pretty_name}
+"""
+    else:
+        prompt_content = ""
+
+    prompt_content += f"""
+You are a senior Linux engineer. Please answer {message}.
+
+
+Instructions:
+- Level of Difficulty: Easily
+- Target Audience: Junior Linux Engineer
+- Note 1: If executable code is provided, please include it in the tag "```sh".
+- Note 2: The environment in which you can enter commands is the CLI.
+- Respond language: Korean
+"""
+
+    print(prompt_content)
 
     messages = [
         {"role": "system", "content": "You are a useful Linux system engineer."},
-        {"role": "user", "content": message}
+        {"role": "user", "content": prompt_content}
     ]
 
     def generate():
@@ -46,6 +78,8 @@ def prompt_api():
                 answer = chunk.get('choices', [{}])[0].get('delta', {}).get('content', "")
                 ascii_answer = ",".join(str(ord(char)) for char in answer)
                 total_answer += answer
+                time.sleep(0.05)
+                print(f"data: {answer}")
                 yield f"data: {ascii_answer}\n\n"
         except Exception as e:
             yield f"data: error: {str(e)}\n\n"
