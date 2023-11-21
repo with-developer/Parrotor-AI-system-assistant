@@ -125,7 +125,7 @@ def add_remote_server():
         "server_ip" : server_ip,
         "server_port" : int(server_port),
         "username" : username,
-        "password" : server_port,
+        "password" : password,
         "security_score" : "unknown",
         "saved_script" : "not saved",
         "last_scan" : "not yet",
