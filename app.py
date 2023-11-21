@@ -6,6 +6,7 @@ from views.user.find_id_view import find_id_blueprint
 from views.user.find_pw_view import find_pw_blueprint
 from views.user.dashboard_view import dashboard_blueprint
 from views.user.linux_command_assistant_view import linux_command_assistant_blueprint
+from views.user.linux_security_assistant_view import linux_security_assistant_blueprint
 from views.admin.dashboard_view import admin_dashboard_blueprint
 from views.admin.manage.user_view import user_manage_blueprint
 from views.admin.manage.remote_view import remote_servers_blueprint
@@ -34,6 +35,8 @@ app.register_blueprint(find_pw_blueprint)
 app.register_blueprint(dashboard_blueprint)
 # linux_command_assistant Blueprint 경로: /views/user/linux_command_assistant_view.py
 app.register_blueprint(linux_command_assistant_blueprint)
+# linux_security_assistant Blueprint 경로: /views/user/linux_security_assistant_view.py
+app.register_blueprint(linux_security_assistant_blueprint)
 # Admin Dashboard Blueprint 경로: /views/admin/dashboard_view.py
 app.register_blueprint(admin_dashboard_blueprint)
 # User Manage Blueprint 경로: /views/admin/manage/user_view.py
