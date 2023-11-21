@@ -3,11 +3,66 @@
     <script src="{{ url_for('static', filename='js/bootstrap/bootstrap.bundle.min.js') }}" crossorigin="anonymous"></script>
     <!-- Jquery JS -->
     <script src="{{ url_for('static', filename='js/jquery/jquery-3.7.1.min.js') }}" crossorigin="anonymous"></script>
+    <!-- Code Block Js -->
+    <script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js"></script>
     <!-- Bootstrap tooltip initialize -->
     <script>
-        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
-        var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
-          return new bootstrap.Tooltip(tooltipTriggerEl)
-        })
+      const body = document.querySelector('body');
+      const sidebar = body.querySelector('.sidebar-custom');
+      const toggle = body.querySelector(".sidebar-toggle");
+      const span_text = body.querySelectorAll(".sidebar-custom-text")
+      let isSidebarCollapsed = false;
+
+      const storedSidebarState = localStorage.getItem("sidebarState");
+      if (storedSidebarState === "collapsed") {
+        sidebar.classList.toggle("close");
+        for (i = 0; i < span_text.length; i++) {
+          span_text[i].classList.toggle("close");
+        }
+        isSidebarCollapsed = true;
+      }
+
+      toggle.addEventListener("click" , () =>{
+        if (isSidebarCollapsed == true) {
+          sidebar.classList.remove("close");
+          for (i = 0; i < span_text.length; i++) {
+            span_text[i].classList.remove("close");
+          }
+          localStorage.setItem("sidebarState", "expanded");
+        }
+        else {
+          sidebar.classList.toggle("close");
+          for (i = 0; i < span_text.length; i++) {
+            span_text[i].classList.toggle("close");
+          }
+          localStorage.setItem("sidebarState", "collapsed");
+        }
+      })
+
+      document.addEventListener("DOMContentLoaded", function () {
+        function activateCurrentPageButton() {
+          console.log("start")
+          const currentPath = window.location.pathname;
+          console.log(currentPath)
+          const allPageButtons = document.querySelectorAll(".nav-link");
+          allPageButtons.forEach((button) => {
+            button.classList.remove("active");
+          });
+          const currentPageButton = document.querySelector(`a[href='..${currentPath}']`);
+          console.log(currentPageButton)
+          if (currentPageButton) {
+            
+            currentPageButton.classList.add("active");
+          }
+        }
+        activateCurrentPageButton();
+      });
+
+      
+
+      var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+      var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+        return new bootstrap.Tooltip(tooltipTriggerEl)
+      })
     </script>
     <!-- Javascript import section end -->
