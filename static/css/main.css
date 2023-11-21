@@ -113,3 +113,13 @@ body, html {
 ::-ms-input-placeholder { /* Microsoft Edge */
     color: gray !important;
 }
+
+pre.bash {
+    background-color: black;
+    color: white;
+    margin:0;
+    padding: 5px;
+    border-radius: 5px;
+    white-space: inherit;
+    font-family: Consolas,Monaco,Lucida Console,Liberation Mono,DejaVu Sans Mono,Bitstream Vera Sans Mono,Courier New, monospace;
+  }
