@@ -124,6 +124,22 @@
       chatHistoryDiv.appendChild(messageDiv);
     }
 
+    // Copy to Clipboard function
+    function copyToClipboard(text) {
+        const textArea = document.createElement('textarea');
+        textArea.value = text;
+        document.body.appendChild(textArea);
+        textArea.select();
+        document.execCommand('copy');
+        document.body.removeChild(textArea);
+    }
+
+    function run_on_terminal(text) {
+      const text_del_br = text.replace(/<br\s*\/?>/g, "\n");
+      const data = text_del_br + "\n";
+      socket.emit("pty-input", { input: data });
+    }
+
 
     $(document).ready(function() {
         $('#prompt-textarea').on('keydown', function(event) {
@@ -172,13 +188,21 @@
 
             chatHistoryDiv.appendChild(messageDiv);
 
+            let serverId;
+            try {
+              serverId = document.getElementById("hiddenServerId").value;
+            } catch (error) {
+              serverId = "None";  // hiddenServerId가 정의되지 않았을 경우 "None"을 설정합니다.
+            }
+            
             fetch('/API/prompt', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({
-                    message: message
+                    message: message,
+                    serverId: serverId
                 })
             })
             .then(response => {
@@ -187,27 +211,33 @@
 
                 function stream() {
                   reader.read().then(({ done, value }) => {
-                      if (done) {
-                        console.log("done!");
-                        const hasCodeBlock = messageTextDiv.innerText.includes("```");
-                        if (hasCodeBlock){
-                          console.log("find code block!");
-                          console.log(hasCodeBlock);
-                          const codeContent = messageTextDiv.innerText.replace(/```([\s\S]+?)```/g, '</p><pre><code>$1</code></pre><p>');
-                            messageTextDiv.innerHTML = `<p>${codeContent}</p>`
-                        }
-                        return;
+                    if (done) {
+                      console.log("done!");
+                      const hasCodeBlock = messageTextDiv.innerHTML.includes("```");
+                      if (hasCodeBlock) {
+                          const codeContent = messageTextDiv.innerHTML.replace(/```sh?<br\s*\/?>\n?([\s\S]+?)<br\s*\/?>\n?```/g, (match, p1) => {
+                              return `
+                                  <div class="code-container">
+                                      <pre class="bash"><code>${p1}</code></pre>
+                                      <button class="btn btn-dark" style="font-size: 10px; margin: 0px; padding: 0 5px 0 5px;" onclick="copyToClipboard('${p1.replace(/'/g, "\\'")}');">Copy to Clipboard</button>
+                                      <button class="btn btn-dark" style="font-size: 10px; margin: 0px; padding: 0 5px 0 5px;" onclick="run_on_terminal('${p1.replace(/'/g, "\\'")}');">Run on Terminal</button>
+                                  </div>`;
+                          });
+                          messageTextDiv.innerHTML = codeContent;
                       }
-                      const chunk = decoder.decode(value)
-                          .replace(/data: /g, '')
-                          .replace(/\n{2}/g, '\n');
+                      return;
+                    }
+                    const chunk = decoder.decode(value)
+                        .replace(/data: /g, '')
+                        .replace(/\n{2}/g, '\n');
 
-                      if (chunk) {
-                          const decodedMessage = chunk.split(",").map(code => String.fromCharCode(code)).join("");
-                          messageTextDiv.innerText += decodedMessage;
-                      }
-                      stream();
-                  });
+                    if (chunk) {
+                        const decodedMessage = chunk.split(",").map(code => String.fromCharCode(code)).join("");
+                        console.log(decodedMessage)
+                        messageTextDiv.innerText += decodedMessage;
+                    }
+                    stream();
+                });
               }
               stream();
             })
@@ -286,7 +316,9 @@
       term.reset();
       const test_val = serverId; // 선택한 서버의 ID를 전달
       socket.emit("connect-server", test_val);
-      status.innerHTML = '<span style="background-color: lightgreen;">' + serverName +' is connected</span>';
+      status.innerHTML = '<span style="background-color: lightgreen;">' + serverName + ' is connected</span><input type="hidden" id="hiddenServerId" value="' + serverId + '">';
+
+      
     }
 
 
