@@ -37,7 +37,7 @@
           <div chat-history style="height: 74vh; overflow: scroll; font-size: 14px;"></div>
           <div class="form-floating mb-3" style="display: flex; margin-top:1rem;">
             <textarea class="form-control" id="prompt-textarea" placeholder="Send a message" tabindex="0" rows="1" data-id="request-:r22:-3" style="resize: none; max-height: 200px; height: 40px; overflow-y: hidden; padding-top:.55rem; margin-right: .3rem;"></textarea>
-            <button type="button" class="btn btn-primary" id="sendButton">send</button>
+            <button type="button" class="btn btn-primary" id="sendButton">Send</button>
           </div>
         </div>
         <!-- Prompt HTML Section End -->
@@ -208,9 +208,14 @@
             .then(response => {
                 const reader = response.body.getReader();
                 const decoder = new TextDecoder();
-
+                var sendbutton = document.getElementById("sendButton")
+                sendbutton.innerText = "Stop"
+                sendButton.className = "btn btn-danger";
                 function stream() {
                   reader.read().then(({ done, value }) => {
+                    var chatHistoryDiv = document.querySelector("[chat-history]");
+                    chatHistoryDiv.scrollTop = chatHistoryDiv.scrollHeight;
+                    
                     if (done) {
                       console.log("done!");
                       const hasCodeBlock = messageTextDiv.innerHTML.includes("```");
@@ -225,6 +230,9 @@
                           });
                           messageTextDiv.innerHTML = codeContent;
                       }
+                      var sendbutton = document.getElementById("sendButton")
+                      sendbutton.innerText = "Send"
+                      sendButton.className = "btn btn-primary";
                       return;
                     }
                     const chunk = decoder.decode(value)
