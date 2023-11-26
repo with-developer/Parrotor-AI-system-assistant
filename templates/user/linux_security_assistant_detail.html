@@ -1,0 +1,626 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    {% include '/template/head.html' %}
+    <title>Dashboard - Jirangobie</title>
+    <style>
+      .user-message {
+          text-align: right;
+          margin: 5px;
+          padding: 5px;
+          border-radius: 5px;
+          background-color: #e6f7ff;
+      }
+      .bot-message {
+          text-align: left;
+          margin: 5px;
+          padding: 5px;
+          border-radius: 5px;
+          background-color: #f2f2f2;
+      }
+      #options {
+        display: flex;
+      }
+
+      .option-item {
+        cursor: pointer; /* 마우스 커서 변경 */
+      }
+
+      .option-item.active {
+        background-color: #6610f2; /* 활성화 상태의 배경 색상 */
+        color: white; /* 활성화 상태의 텍스트 색상 */
+      }
+  </style>
+  <link rel="stylesheet" href="https://unpkg.com/xterm@4.11.0/css/xterm.css"/>
+  </head>
+  <body>
+    
+    <div class="sidebar">
+      {% include '/template/user_sidebar.html' %}
+    </div>
+    
+    <div class="main_grid">
+      <div class="top-content">
+        {% include '/template/header.html' %}
+      </div>
+      <div class="bottom-content" style="display: flex;">
+        <!-- Prompt HTML Section Start -->
+        <div class="shadow-sm p-3 mb-5 bg-body rounded" style="margin: 1rem 1rem 0 2rem !important; height: 86vh; width: 50%;">
+          <div chat-history style="height: 74vh; overflow: scroll; font-size: 14px;"></div>
+          <div class="form-floating mb-3" style="display: flex; margin-top:1rem;" id="send-question-form">
+            <button type="button" class="btn btn-info" id="questionButton" style="white-space: nowrap; font-size: smaller;">질문 모드</button>
+            <textarea class="form-control" id="prompt-textarea" placeholder="질문을 입력해주세요." tabindex="0" rows="1" data-id="request-:r22:-3" style="resize: none; max-height: 200px; height: 40px; overflow-y: hidden; padding-top:.55rem; margin-left: .3rem; margin-right: .3rem; max-width: 79%;"></textarea>
+            <button type="button" class="btn btn-primary" id="sendButton">Send</button>
+          </div>
+          <div class="form-floating mb-3" style="display: none; margin-top:1rem;" id="send-answer-form">
+            <button type="button" class="btn btn-info" id="answerButton" style="white-space: nowrap; font-size: smaller;">답변 모드</button>
+            <div id="options" style="margin-left: .3rem;">
+              <button class="btn-outline-secondary option-item" style="border-style: none; white-space: nowrap;">양호</button>
+              <button class="btn-outline-secondary option-item" style="border-style: none; white-space: nowrap;">취약</button>
+              <button class="btn-outline-secondary option-item" style="border-style: none; white-space: nowrap;">N/A</button>
+            </div>
+            <textarea class="form-control" id="answer-textarea" placeholder="판단 사유를 입력해주세요." tabindex="0" rows="1" data-id="request-:r22:-3" style="resize: none; max-height: 200px; height: 40px; overflow-y: hidden; padding-top:.55rem; margin-left: .3rem; margin-right: .3rem; max-width: 79%;"></textarea>
+
+            <button type="button" class="btn btn-primary" id="sendButton2">Send</button>
+          </div>
+        </div>
+        <!-- Prompt HTML Section End -->
+
+        <!-- Terminal HTML Section Start -->
+        <div class="shadow-sm bg-body rounded" style="margin: 1rem 2rem 0 1rem; height: 95%; width: 50%;">
+          <div style="height: 86%;">
+            
+
+
+            <span style="font-size: small">status:
+              <span style="font-size: small" id="status">Select the server with the button left.</span>
+            </span>
+            <div style="width: 100%; height: 90%" id="terminal"></div>
+          </div>
+        </div>
+        <!-- Terminal HTML Section End -->
+
+      </div>
+      
+    </div>
+    {% include '/template/foot.html' %}
+    <!-- xterm.js & socket javascript library -->
+    <script src="https://unpkg.com/xterm@4.11.0/lib/xterm.js"></script>
+    <script src="https://unpkg.com/xterm-addon-fit@0.5.0/lib/xterm-addon-fit.js"></script>
+    <script src="https://unpkg.com/xterm-addon-web-links@0.4.0/lib/xterm-addon-web-links.js"></script>
+    <script src="https://unpkg.com/xterm-addon-search@0.8.0/lib/xterm-addon-search.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.min.js"></script>
+
+
+    <script>
+
+      document.getElementById("sendButton2").addEventListener("click", function() {
+        // 1. 현재 URL에서 파라미터 가져오기
+        const params = new URLSearchParams(window.location.search);
+        
+        // 2. 'policy'와 'key' 파라미터 추출
+        const policy_name = params.get('policy');
+        const serverId = params.get('key');
+        const servername = params.get('servername');
+
+        // 3. 선택된 항목 가져오기
+        const selectedOption = document.querySelector('.option-item.active');
+
+        // 선택된 항목이 없다면 알림 표시하고 함수 종료
+        if (!selectedOption) {
+          alert('진단 결과를 선택하세요.');
+          return;
+        }
+
+        const selectedOptionText = selectedOption.textContent;
+        const answerTextareaValue = document.getElementById('answer-textarea').value;
+
+        // 4. /API/save_result 경로로 POST 요청 보내기
+        fetch('/API/save_result', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            policy_name: policy_name,
+            serverId: serverId,
+            option: selectedOptionText,
+            answer: answerTextareaValue,
+            servername: servername
+          })
+        })
+        .then(response => response.json())
+        .then(data => {
+          // 5. 응답 처리
+          if (data.status === 'success') {
+            addMessage("user", `진단 항목: ${policy_name}\n진단 서버: ${servername}\n진단 결과: ${selectedOptionText}\n판단 사유: ${answerTextareaValue}`, "None")
+            setTimeout(() =>addMessage("bot", "수고많으셨습니다! 결과가 저장되었습니다!","None"), 500);
+            
+            
+          } else {
+            alert('저장에 실패했습니다.');
+          }
+        })
+        .catch(error => {
+          console.error('Error:', error);
+          alert('오류가 발생했습니다.');
+        });
+        var chatHistoryDiv = document.querySelector("[chat-history]");
+        setTimeout(() =>chatHistoryDiv.scrollTop = chatHistoryDiv.scrollHeight,700);
+      });
+
+
+
+
+    document.getElementById("questionButton").addEventListener("click", function() {
+        var formDiv = document.getElementById("send-question-form");
+        formDiv.style.display = "None";
+        var answerformDiv = document.getElementById("send-answer-form");
+        answerformDiv.style.display = "flex";
+    });
+
+    document.getElementById("answerButton").addEventListener("click", function() {
+        var formDiv = document.getElementById("send-answer-form");
+        formDiv.style.display = "None";
+        var questionformDiv = document.getElementById("send-question-form");
+        questionformDiv.style.display = "flex";
+    });
+
+    document.querySelectorAll('.option-item').forEach(function(item) {
+      item.addEventListener('click', function() {
+        // 모든 항목의 활성 상태 제거
+        document.querySelectorAll('.option-item').forEach(function(el) {
+          el.classList.remove('active');
+        });
+
+        // 클릭된 항목에 활성 상태 추가
+        this.classList.add('active');
+      });
+    });
+      
+    // Prompt javascript section start
+    function addMessage(type, text, option) {
+      const chatHistoryDiv = document.querySelector("[chat-history]");
+      const messageDiv = document.createElement("div");
+      messageDiv.style.display = "flex";
+      messageDiv.style.flexWrap = 'wrap';
+      messageDiv.style.borderRadius = "5px"
+
+
+
+      if (type === "user") {
+        messageDiv.style.backgroundColor = "#e6f7ff";
+        messageDiv.style.justifyContent = "right";
+        messageDiv.style.margin = "0 0 5px 0";
+        const userIcon = document.createElement("img");
+        userIcon.src = "{{ url_for('static', filename='images/icons/icons8-user-60.png') }}"; // 봇 아이콘 이미지 파일 경로
+        userIcon.alt = "User Icon";
+        userIcon.width = "32";
+        userIcon.height = "32";
+        userIcon.style.alignSelf = "baseline";
+        userIcon.style.marginTop = "3px";
+        userIcon.style.marginRight = "5px";
+        const messageTextDiv = document.createElement("div");
+        messageTextDiv.className = "user-message";
+        messageTextDiv.innerText = text;
+        messageDiv.appendChild(messageTextDiv);
+        messageDiv.appendChild(userIcon);
+        
+      } else if (type === "bot") {
+        messageDiv.style.backgroundColor = "#f2f2f2";
+        messageDiv.style.margin = "0 0 5px 0";
+        const botIcon = document.createElement("img");
+        botIcon.src = "{{ url_for('static', filename='images/logo3.png') }}"; // 봇 아이콘 이미지 파일 경로
+        botIcon.alt = "Bot Icon";
+        botIcon.className = "message-icon";
+        botIcon.width = "32";
+        botIcon.height = "32";
+        botIcon.style.alignSelf = "baseline";
+        botIcon.style.marginTop = "3px";
+        botIcon.style.marginLeft = "5px";
+        messageDiv.appendChild(botIcon);
+        const messageTextDiv = document.createElement("div");
+        messageTextDiv.className = "bot-message";
+        messageTextDiv.innerText = text;
+        messageDiv.appendChild(messageTextDiv);
+        if (option == "first"){
+          const table = document.createElement("table");
+          table.className = "table table-striped"; // Bootstrap 클래스 적용
+          table.style.margin = "0 40px";
+          // table.style.color = "white";
+          // table.style.background = "black";
+          table.style.padding = "0.5rem";
+          table.style.margin = ".5rem";
+          table.style.fontSize = ".7rem";
+          table.style.borderRadius = "inherit";
+          table.style.width = "100%";
+
+          const thead = document.createElement("thead")
+          const thead_tr = document.createElement("tr")
+          const thead_th = document.createElement("th")
+          thead_th.scope="col"
+          thead_th.style.textAlign = "center"
+          thead_th.innerText = "#";
+          const thead_th2 = document.createElement("th")
+          thead_th2.scope="col"
+          thead_th2.style.textAlign = "center"
+          thead_th2.innerText = "내용";
+
+          const tbody = document.createElement("tbody")
+
+          thead_tr.appendChild(thead_th)
+          thead_tr.appendChild(thead_th2)
+          thead.appendChild(thead_tr)
+          table.appendChild(thead)
+          
+
+          function addRow(header, data) {
+              const row = document.createElement("tr");
+              
+
+              const headerCell = document.createElement("td");
+              headerCell.innerText = header;
+              headerCell.style.whiteSpace = "nowrap"; // 줄바꿈 방지
+              headerCell.style.textAlign = "center"; // 가운데 정렬
+              headerCell.style.padding = "0 1rem";
+              headerCell.style.verticalAlign = "middle";
+              row.appendChild(headerCell);
+              
+
+              const dataCell = document.createElement("td");
+              dataCell.innerText = data;
+              
+              row.appendChild(dataCell);
+
+              
+              tbody.appendChild(row);
+
+          }
+
+          addRow("분류", "{{ policy_classification }}");
+          addRow("진단 항목", "{{ policy_name }} ({{ policy_detail.id }}) (중요도 {{ policy_detail.level }})");
+          addRow("점검 내용", "{{ policy_detail['점검내용'] }}");
+          addRow("점검 목적", "{{ policy_detail['점검목적'] }}");
+          addRow("보안 위협", `{{ policy_detail['보안위협'] }}`);
+          addRow("점검 방법", `{{ policy_detail['점검방법 (SSH)'] }}`)
+          addRow("양호 기준", `{{ policy_detail['판단기준 (양호)'] }}`)
+          addRow("취약 기준", `{{ policy_detail['판단기준 (취약)'] }}`)
+          addRow("참고", `{{ policy_detail['참고'] }}`)
+
+          table.appendChild(tbody)
+          messageDiv.appendChild(table);
+
+
+
+          
+        }
+      }
+
+      
+
+      chatHistoryDiv.appendChild(messageDiv);
+    }
+
+    // Copy to Clipboard function
+    function copyToClipboard(text) {
+        const textArea = document.createElement('textarea');
+        textArea.value = text;
+        document.body.appendChild(textArea);
+        textArea.select();
+        document.execCommand('copy');
+        document.body.removeChild(textArea);
+    }
+
+    function run_on_terminal(text) {
+      const text_del_br = text.replace(/<br\s*\/?>/g, "\n");
+      const data = text_del_br + "\n";
+      socket.emit("pty-input", { input: data });
+    }
+
+
+    $(document).ready(function() {
+        $('#prompt-textarea').on('keydown', function(event) {
+            if (event.which === 13) {
+                if (event.shiftKey) {
+                    return true;
+                } else {
+                    event.preventDefault();
+                    sendMessage();
+                }
+            }
+        });
+
+        
+
+        $("#sendButton").on("click", function() {
+            sendMessage();
+        });
+        
+        function sendMessage() {
+            const message = $('#prompt-textarea').val().trim();
+            if (!message) {
+                return;
+            }
+
+            addMessage("user", message);
+            const chatHistoryDiv = document.querySelector("[chat-history]");
+            const messageDiv = document.createElement("div");
+            messageDiv.style.display = "flex";
+            messageDiv.style.borderRadius = "5px"
+            messageDiv.style.backgroundColor = "#f2f2f2";
+            messageDiv.style.margin = "0 0 5px 0";
+            const botIcon = document.createElement("img");
+            botIcon.src = "{{ url_for('static', filename='images/logo3.png') }}"; // 봇 아이콘 이미지 파일 경로
+            botIcon.alt = "Bot Icon";
+            botIcon.className = "message-icon";
+            botIcon.width = "32";
+            botIcon.height = "32";
+            botIcon.style.alignSelf = "baseline";
+            botIcon.style.marginTop = "3px";
+            messageDiv.appendChild(botIcon);
+            const messageTextDiv = document.createElement("div");
+            messageTextDiv.className = "bot-message";
+
+            messageDiv.appendChild(messageTextDiv);
+
+            chatHistoryDiv.appendChild(messageDiv);
+
+            let serverId = "None";
+            
+            let var_policy_name;
+            const params = new URLSearchParams(window.location.search);
+            params.forEach((value, key) => {
+              if (key == "policy"){
+                var_policy_name = value;
+              }
+              else if (key == "key"){
+                serverId = value;
+              }
+            });
+            
+            fetch('/API/prompt/security_assistant', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    message: message,
+                    serverId: serverId,
+                    policy_name: var_policy_name
+                })
+            })
+            .then(response => {
+                const reader = response.body.getReader();
+                const decoder = new TextDecoder();
+                var sendbutton = document.getElementById("sendButton")
+                sendbutton.innerText = "Stop"
+                sendButton.className = "btn btn-danger";
+
+                function stream() {
+                  reader.read().then(({ done, value }) => {
+                    var chatHistoryDiv = document.querySelector("[chat-history]");
+                    chatHistoryDiv.scrollTop = chatHistoryDiv.scrollHeight;
+                    if (done) {
+                      console.log("done!");
+                      const hasCodeBlock = messageTextDiv.innerHTML.includes("```");
+                      if (hasCodeBlock) {
+                          const codeContent = messageTextDiv.innerHTML.replace(/```sh?<br\s*\/?>\n?([\s\S]+?)<br\s*\/?>\n?```/g, (match, p1) => {
+                              return `
+                                  <div class="code-container">
+                                      <pre class="bash"><code>${p1}</code></pre>
+                                      <button class="btn btn-dark" style="font-size: 10px; margin: 0px; padding: 0 5px 0 5px;" onclick="copyToClipboard('${p1.replace(/'/g, "\\'")}');">Copy to Clipboard</button>
+                                      <button class="btn btn-dark" style="font-size: 10px; margin: 0px; padding: 0 5px 0 5px;" onclick="run_on_terminal('${p1.replace(/'/g, "\\'")}');">Run on Terminal</button>
+                                  </div>`;
+                          });
+                          messageTextDiv.innerHTML = codeContent;
+                      }
+                      var sendbutton = document.getElementById("sendButton")
+                      sendbutton.innerText = "Send"
+                      sendButton.className = "btn btn-primary";
+                      return;
+                    }
+                    const chunk = decoder.decode(value)
+                        .replace(/data: /g, '')
+                        .replace(/\n{2}/g, '\n');
+
+                    if (chunk) {
+                        const decodedMessage = chunk.split(",").map(code => String.fromCharCode(code)).join("");
+                        console.log(decodedMessage)
+                        messageTextDiv.innerText += decodedMessage;
+                    }
+                    stream();
+                });
+              }
+              stream();
+            })
+            .catch(error => {
+                console.error("Error:", error);
+            });
+
+            $('#prompt-textarea').val('');
+        }
+    });
+
+    
+    addMessage("bot", "안녕하세요, 저는 당신의 리눅스 보안 어시스턴트 Parrotor입니다.\n오른쪽 터미널에서 직접 진단을 수행해보세요.\n진단 항목은 아래와 같습니다.","first");
+    // Prompt javascript section end
+
+
+  // Terminal javascript section start
+    const term = new Terminal({
+      cursorBlink: true,
+      macOptionIsMeta: true,
+      scrollback: true,
+      fontSize: 12,
+    });
+    term.attachCustomKeyEventHandler(customKeyEventHandler);
+
+    const fit = new FitAddon.FitAddon();
+    term.loadAddon(fit);
+    term.loadAddon(new WebLinksAddon.WebLinksAddon());
+    term.loadAddon(new SearchAddon.SearchAddon());
+
+    term.open(document.getElementById("terminal"));
+    fit.fit();
+    term.resize(30, 82);
+    // console.log(`size: ${term.cols} columns, ${term.rows} rows`);
+    fit.fit();
+    term.writeln("1. You can copy with ctrl+shift+x");
+    term.writeln("2. You can paste with ctrl+shift+v");
+    
+    term.onData((data) => {
+      console.log("browser terminal received new data:", data);
+      socket.emit("pty-input", { input: data });
+    });
+
+    const socket = io.connect("/API/terminal/pty");
+    const status = document.getElementById("status");
+
+    
+
+    
+    socket.on("pty-output", function (data) {
+      console.log("new output received from server:", data.output);
+      term.write(data.output);
+    });
+    
+
+    socket.on("connect", () => {
+      fitToscreen();
+    });
+
+    socket.on("disconnect", () => {
+      status.innerHTML =
+        '<span style="background-color: #ff8383;">disconnected</span>';
+    });
+
+    function fitToscreen() {
+      fit.fit();
+      const dims = { cols: term.cols, rows: term.rows };
+      console.log("sending new dimensions to server's pty", dims);
+      dims.rows = 47;
+      term.resize(dims.cols, dims.rows);
+      socket.emit("resize", dims);
+      // socket.emit("pty-init","");
+
+    }
+
+    function connect_server(serverId,serverName) {
+      term.clear();
+      term.reset();
+      const test_val = serverId; // 선택한 서버의 ID를 전달
+      socket.emit("connect-server", test_val);
+      status.innerHTML = '<span style="background-color: lightgreen;">' + serverName + ' is connected</span><input type="hidden" id="hiddenServerId" value="' + serverId + '">';
+
+      
+    }
+
+
+
+    function debounce(func, wait_ms) {
+      let timeout;
+      return function (...args) {
+        const context = this;
+        clearTimeout(timeout);
+        timeout = setTimeout(() => func.apply(context, args), wait_ms);
+      };
+    }
+
+    /**
+     * Handle copy and paste events
+     */
+    function customKeyEventHandler(e) {
+      if (e.type !== "keydown") {
+        return true;
+      }
+      if (e.ctrlKey && e.shiftKey) {
+        const key = e.key.toLowerCase();
+        if (key === "v") {
+          // ctrl+shift+v: paste whatever is in the clipboard
+          navigator.clipboard.readText().then((toPaste) => {
+            term.writeText(toPaste);
+          });
+          return false;
+        } else if (key === "c" || key === "x") {
+          // ctrl+shift+x: copy whatever is highlighted to clipboard
+
+          // 'x' is used as an alternate to 'c' because ctrl+c is taken
+          // by the terminal (SIGINT) and ctrl+shift+c is taken by the browser
+          // (open devtools).
+          // I'm not aware of ctrl+shift+x being used by anything in the terminal
+          // or browser
+          const toCopy = term.getSelection();
+          navigator.clipboard.writeText(toCopy);
+          term.focus();
+          return false;
+        }
+      }
+      return true;
+    }
+
+    const wait_ms = 50;
+    window.onresize = debounce(fitToscreen, wait_ms);
+    // Terminal javascript section end
+
+    function fetchAndDisplayServerNames() {
+      $.get("/API/remote/get-servers-name", function (data) {
+        if (data.status === "success") {
+          const serverList = data.servers;
+
+
+          // 서버 목록 순회하며 각 서버의 이름을 리스트에 추가
+          for (const serverId in serverList) {
+            const server = serverList[serverId];
+            const serverName = server.server_name;
+
+            // li 태그를 생성하고 리스트에 추가
+            const listItem = $("<li>");
+            const link = $("<a>").addClass("dropdown-item").attr("href", "#");
+            link.text(serverName);
+            listItem.append(link);
+
+            // hidden input 요소를 생성하여 ID 값을 저장
+            const hiddenInput = $("<input>")
+              .attr("type", "hidden")
+              .attr("name", "server-id")
+              .val(serverId);
+            listItem.append(hiddenInput);
+
+
+
+            // 클릭 이벤트를 처리하여 서버 이름을 선택하면 해당 서버로 연결하도록 구현
+            link.click(function () {
+              // 선택한 서버의 ID 값을 가져옴
+              const selectedServerId = listItem.find('input[name="server-id"]').val();
+
+              // 선택한 서버로 연결하는 함수 호출
+              connect_server(selectedServerId,serverName);
+            });
+          }
+        } else {
+          console.error("Failed to fetch server names.");
+        }
+      });
+    }
+
+    // 페이지 로드 시 서버 이름을 가져와 리스트에 추가
+    $(document).ready(function () {
+      fetchAndDisplayServerNames();
+      const searchParams = new URLSearchParams(location.search);
+      let server_id_var = "None"
+      let server_name_var = "None"
+
+      for (const param of searchParams) {
+        console.log(param);
+        if (param[0] == "key"){
+          server_id_var = param[1]
+          
+        }
+        else if (param[0] == 'servername'){
+          connect_server(server_id_var,param[1]);
+        }
+      }
+    });
+    </script>
+  </body>
+</html>
