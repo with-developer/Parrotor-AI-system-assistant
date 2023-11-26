@@ -10,27 +10,28 @@
         
 
         <li>
-            <a href="../dashboard/" class="nav-link text-white">
+            <a href="/dashboard/" class="nav-link text-white">
                 <img src="{{ url_for('static', filename='images/icons/icons8-dashboard-50.png') }}" width="16"
                     height="16" class="d-inline-block align-middle" alt="">
                 <span class="sidebar-custom-text">Dashboard</span>
             </a>
         </li>
         <li>
-            <a href="../linux_command_assistant/" class="nav-link text-white">
+            <a href="/linux_command_assistant/" class="nav-link text-white">
                 <img src="{{ url_for('static', filename='images/icons/icons8-linux-50.png') }}" width="16"
                     height="16" class="d-inline-block align-middle" alt="">
                 <span class="sidebar-custom-text">Linux Command Assistant</span>
             </a>
         </li>
         <li>
-            <a href="../security_level_assessment/" class="nav-link text-white">
+            <a href="/linux_security_assistant/" class="nav-link text-white">
                 <img src="{{ url_for('static', filename='images/icons/icons8-security-configuration-50.png') }}" width="16"
                     height="16" class="d-inline-block align-middle" alt="">
                 <span class="sidebar-custom-text">Linux Security Assistant</span>
             </a>
         </li>
         {% if is_admin %}
+        <hr style="margin-top: 27rem;">
 
         <li>
             <a href="/jiranistrator/dashboard/" class="nav-link text-white" style="position: fixed; bottom:12%;">
