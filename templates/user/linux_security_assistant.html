@@ -1,0 +1,222 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    {% include '/template/head.html' %}
+    <title>Dashboard - Jirangobie</title>
+    <style>
+    .user-message {
+        text-align: right;
+        margin: 5px;
+        padding: 5px;
+        border-radius: 5px;
+        background-color: #e6f7ff;
+    }
+    .bot-message {
+        text-align: left;
+        margin: 5px;
+        padding: 5px;
+        border-radius: 5px;
+        background-color: #f2f2f2;
+        width: 80%;
+    }
+    .append_box {
+      border-style: double;
+      padding: 1rem;
+    }
+    </style>
+  </head>
+  <body>
+    
+    <div class="sidebar">
+      {% include '/template/user_sidebar.html' %}
+    </div>
+    
+    <div class="main_grid">
+      <div class="top-content">
+        {% include '/template/header.html' %}
+      </div>
+      <div class="bottom-content">
+        <div class="shadow-sm p-3 mb-5 bg-body rounded" style="margin: 1rem 1rem 0 2rem !important; height: 86vh; width: 90vw;">
+          <div chat-history style="height: 83vh; overflow: scroll; font-size: 14px;"></div>
+        </div>
+      </div>
+      
+    </div>
+    {% include '/template/foot.html' %}
+    <script>
+      function addMessage(type, text, option, item) {
+      const chatHistoryDiv = document.querySelector("[chat-history]");
+      const messageDiv = document.createElement("div");
+      messageDiv.style.display = "flex";
+      messageDiv.style.flexWrap = 'wrap';
+      messageDiv.style.borderRadius = "5px"
+
+
+
+      if (type === "user") {
+        messageDiv.style.backgroundColor = "#e6f7ff";
+        messageDiv.style.justifyContent = "right";
+        messageDiv.style.margin = "0 0 5px 0";
+        const userIcon = document.createElement("img");
+        userIcon.src = "{{ url_for('static', filename='images/icons/icons8-user-60.png') }}"; // 봇 아이콘 이미지 파일 경로
+        userIcon.alt = "User Icon";
+        userIcon.width = "32";
+        userIcon.height = "32";
+        userIcon.style.alignSelf = "baseline";
+        userIcon.style.marginTop = "3px";
+        userIcon.style.marginRight = "5px";
+        const messageTextDiv = document.createElement("div");
+        messageTextDiv.className = "user-message";
+        messageTextDiv.innerText = text;
+        messageDiv.appendChild(messageTextDiv);
+        messageDiv.appendChild(userIcon);
+        
+      } else if (type === "bot") {
+        messageDiv.style.backgroundColor = "#f2f2f2";
+        messageDiv.style.margin = "0 0 5px 0";
+        const botIcon = document.createElement("img");
+        botIcon.src = "{{ url_for('static', filename='images/logo3.png') }}"; // 봇 아이콘 이미지 파일 경로
+        botIcon.alt = "Bot Icon";
+        botIcon.className = "message-icon";
+        botIcon.width = "32";
+        botIcon.height = "32";
+        botIcon.style.alignSelf = "baseline";
+        botIcon.style.marginTop = "3px";
+        botIcon.style.marginLeft = "5px";
+        messageDiv.appendChild(botIcon);
+        const messageTextDiv = document.createElement("div");
+        messageTextDiv.className = "bot-message";
+        messageTextDiv.innerText = text;
+        messageDiv.appendChild(messageTextDiv);
+        if (option == "first"){
+          $.ajax({
+            url: '/API/policy',
+            type: 'GET',
+            dataType: 'json',
+            success: function(response) {
+                // 응답의 "status"가 "success"인 경우
+                if (response.status === "success") {
+                    // "message"에 있는 리스트들을 콘솔에 출력
+                    const out = document.createElement("div");
+                    out.style.display = "flex";
+                    out.style.marginLeft = "35px";
+
+                    response.message.forEach((item, index) => {
+                      const button = document.createElement("button");
+                      button.className = "append_box";
+                      button.innerText = item;
+                      button.id = "button_" + index; // 고유 ID 할당
+                      button.style.margin = "5px";
+                      button.onclick = function() {
+                        console.log("Clicked on item: " + item);
+                        addMessage("user", `${item}`,"None")
+                        addMessage("bot", `${item}을 선택하셨네요. \n어떤 세부 항목을 진단해볼까요?`, "second",item);
+                      };
+                    out.appendChild(button);
+
+                  });
+                  messageDiv.appendChild(out);
+                }
+                else{
+                  console.log("Error")
+                }
+            },
+            error: function(xhr, status, error) {
+                // 오류 발생 시 콘솔에 오류 메시지 출력
+                console.error("Error: " + error);
+            }
+        });
+        } else if (option == "second") {
+          $.ajax({
+            url: '/API/policy',
+            type: 'GET',
+            data: { policy: item }, // 'item' 변수의 값을 'policy' 파라미터로 전송
+            dataType: 'json',
+            success: function(response) {
+              if (response.status === "success") {
+                // 응답 처리 로직
+                console.log("Response received:", response.message);
+                const out = document.createElement("div");
+                out.style.display = "flex";
+                out.style.flexWrap = "wrap";
+                out.style.marginLeft = "35px";
+
+                response.message.forEach((item, index) => {
+                  const button = document.createElement("button");
+                  button.className = "append_box";
+                  button.innerText = item;
+                  button.id = "button_" + index; // 고유 ID 할당
+                  button.style.margin = "5px";
+                  button.onclick = function() {
+                    console.log("Clicked on item: " + item);
+                    addMessage("user", `${item}`,"None")
+                    addMessage("bot", `${item}을 선택하셨네요. \n어떤 서버에서 진단을 해볼까요?`, "third",item);
+                    //window.location.href = '/linux_security_assistant/detail/?policy=' + encodeURIComponent(item);
+                  };
+                  out.appendChild(button);
+                });
+
+                messageDiv.appendChild(out);
+                // 여기에 추가적인 처리 로직을 구현할 수 있습니다.
+              } else {
+                console.error("Error in response:", response.message);
+              }
+            },
+            error: function(xhr, status, error) {
+              console.error("Error in AJAX request:", error);
+            }
+          });
+        } else if (option == "third") {
+          $.ajax({
+            url: '/API/remote/get-servers-name',
+            type: 'GET',
+            dataType: 'json',
+            success: function(response) {
+              if (response.status === "success") {
+                // 응답 처리 로직
+                console.log("Response received:", response.servers);
+                const out = document.createElement("div");
+                out.style.display = "flex";
+                out.style.flexWrap = "wrap";
+                out.style.marginLeft = "35px";
+
+                  Object.keys(response.servers).forEach(function(k){
+                      console.log('키값 : '+k + ', 데이터값 : ' + response.servers[k]['server_name']);
+
+                  
+                  const button = document.createElement("button");
+                  button.className = "append_box";
+                  button.innerText = response.servers[k]['server_name'];
+                  button.id = "button_" + k; // 고유 ID 할당
+                  button.style.margin = "5px";
+                  button.onclick = function() {
+                    console.log("Clicked on item: " + response.servers[k]['server_name']);
+                    window.location.href = '/linux_security_assistant/detail/?policy=' + encodeURIComponent(item) + `&key=`+k+`&servername=`+response.servers[k]['server_name'];
+                  };
+                  out.appendChild(button);
+                });
+
+                messageDiv.appendChild(out);
+                var chatHistoryDiv = document.querySelector("[chat-history]");
+                chatHistoryDiv.scrollTop = chatHistoryDiv.scrollHeight;
+              } else {
+                console.error("Error in response:", response.message);
+              }
+            },
+            error: function(xhr, status, error) {
+              console.error("Error in AJAX request:", error);
+            }
+          });
+        }
+      }
+
+      
+
+      chatHistoryDiv.appendChild(messageDiv);
+    }
+      $(document).ready(function() {
+        addMessage("bot", "안녕하세요, 저는 당신의 리눅스 보안 어시스턴트 Parrotor입니다. \n어떤 항목을 진단해볼까요?","first");
+      });
+    </script>
+  </body>
+</html>
