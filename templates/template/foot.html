@@ -42,13 +42,18 @@
       document.addEventListener("DOMContentLoaded", function () {
         function activateCurrentPageButton() {
           console.log("start")
-          const currentPath = window.location.pathname;
+          let currentPath = window.location.pathname;
+          if (currentPath.startsWith("/jiranistrator/")){
+            console.log(currentPath)
+          }else{
+            currentPath = "/"+currentPath.split('/').filter(Boolean)[0]+"/";
+          }
           console.log(currentPath)
           const allPageButtons = document.querySelectorAll(".nav-link");
           allPageButtons.forEach((button) => {
             button.classList.remove("active");
           });
-          const currentPageButton = document.querySelector(`a[href='..${currentPath}']`);
+          const currentPageButton = document.querySelector(`a[href='${currentPath}']`);
           console.log(currentPageButton)
           if (currentPageButton) {
             
