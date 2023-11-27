@@ -1,0 +1,75 @@
+@font-face {
+    font-family: 'NanumGithicCoding';
+    src: url('/static/fonts/NanumGothicCoding-Bold.ttf') format('truetype'),
+        url('/static/fonts/NanumGothicCoding.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+body {
+    font-family: 'NanumGithicCoding', sans-serif !important;
+    overflow: auto;
+}
+body, html {
+    margin: 0;
+    display: flex;
+    height: 100%;
+    width: 100%;
+    background-color: #f0f0f0;
+}
+
+.signin_up {
+    text-align: center;
+    background-color: #f0f0f0;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end; /* Align items to the end */
+    padding-top: 300px; /* Add padding at the top to push content down */
+}
+
+.form-group .form-control {
+    background: #FCFCFC;
+    border-radius: 50px;
+}
+
+#signin_form {
+    position: absolute; /* 절대 위치 지정 */
+    left: 50%; /* 화면의 가운데 정렬을 위해 */
+    top: 1%; /* 화면의 가운데 정렬을 위해 */
+    transform: translate(-50%, -80%); /* 정확한 중앙 정렬을 위해 */
+    width: 460px; /* 폼의 너비 */
+    background: transparent; /* 배경색 */
+    padding: 20px; /* 내부 여백 */
+    border-radius: 20px; /* 모서리 둥글게 */
+    text-align: center; /* 텍스트 중앙 정렬 */
+}
+
+.signin_up .btn-primary {
+    background-color: #233C63;
+    border-color: #233C63;
+    border-radius: 40px;
+    width: 20%; /* 버튼 너비 조정 */
+    padding: 10px 15px; /* 패딩 조정 */
+    font-size: 0.8rem; /* 글꼴 크기 조정 */
+}
+
+.signin_up .btn-primary:hover {
+    background-color: #1a2d4b;
+    border-color: #1a2d4b;
+    border-radius: 40px;
+}
+
+.signin_up .btn-outline-dark {
+    margin: 1rem .2rem;
+    border-color: #fff;
+    font-size: .9rem;
+}
+
+.signin_up .login_options {
+    display: block;
+}
+
+.footer {
+    margin-top: auto; /* 하단에 위치 */
+}
