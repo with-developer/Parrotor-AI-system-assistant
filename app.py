@@ -24,6 +24,10 @@ from views.API.remote.remote_servers_api import remote_api_blueprint
 from views.API.linux_security_assistant.policy import policy_api_blueprint
 from views.API.linux_security_assistant.save_result import save_result_api_blueprint
 from views.API.logs.logs_api import logs_api_blueprint
+from views.API.logs.logs_dashboard_api import logs_dashboard_api_blueprint
+from views.API.linux_command_assistant.check_input_api import check_input_api_blueprint
+from views.API.account.dash_userinfo_api import dash_userinfo_api_blueprint
+
 from config import app
 app = Flask(__name__)
 socketio.init_app(app)
@@ -83,6 +87,13 @@ app.register_blueprint(save_result_api_blueprint)
 
 app.register_blueprint(logs_api_blueprint)
 
+app.register_blueprint(logs_dashboard_api_blueprint)
+
+# 터미널 질문 검사(토스트용) 추가: Prompt의 입력값 검사 Blueprint 경로: /views/API/linux_command_assistant/check_input.py
+app.register_blueprint(check_input_api_blueprint)
+
+# user/dashboard의 info 불러오기 경로: /views/API/account/dash_userinfo_api.py
+app.register_blueprint(dash_userinfo_api_blueprint)
 
 # app.py
 if __name__ == '__main__':

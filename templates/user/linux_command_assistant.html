@@ -171,16 +171,44 @@
                     return true;
                 } else {
                     event.preventDefault();
-                    sendMessage();
+                    checkMessage();
                 }
             }
         });
-
-        
+         
 
         $("#sendButton").on("click", function() {
-            sendMessage();
+          checkMessage();
         });
+
+        /*  정책 수정: 입력값 <-> 정책 검사 함수 추가  */ 
+        function checkMessage() {
+            const message = $('#prompt-textarea').val().trim();
+            if (!message) {
+                return;
+            }
+
+            fetch('/API/check_input', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({input: message})
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.violation) {
+                    // 정책 위반 시 경고창을 띄움
+                    showToast('Policy Violation detected');
+                }
+                // GPT-3의 응답과 상관없이 sendMessage 호출
+                sendMessage();
+            })
+            .catch(error => {
+                console.error("Error: ", error);
+                showToast('Error occurred'); // 오류 발생 시 경고창
+            });
+        }
+
+        
         
         function sendMessage() {
             const message = $('#prompt-textarea').val().trim();
@@ -281,6 +309,16 @@
             $('#prompt-textarea').val('');
         }
     });
+
+    // showToast method start
+    function showToast(message) {
+    const toast = $('<div class="toast" role="alert" aria-live="assertive" aria-atomic="true" data-delay="5000">');
+    const toastBody = $('<div class="toast-body">').text(message);
+    toast.append(toastBody);
+    $('body').append(toast);
+    const bsToast = new bootstrap.Toast(toast);
+    bsToast.show();
+  }
 
     
     addMessage("bot", "안녕하세요, 저는 당신의 리눅스 명령어 어시스턴트 Parrotor입니다. \n무엇을 도와드릴까요?");
