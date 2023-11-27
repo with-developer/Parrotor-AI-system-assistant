@@ -9,4 +9,4 @@ linux_command_assistant_blueprint = Blueprint('linux_command_assistant', __name_
 @check_verification(['user', 'admin'])
 def linux_command_assistant():
     is_admin = True if g.user_role == "admin" else False
-    return render_template('user/linux_command_assistant.html', page_title="사용자/리눅스 명렁어 어시스턴트", is_admin=is_admin)
+    return render_template('user/linux_command_assistant.html', page_title="리눅스 명령어 어시스턴트", is_admin=is_admin)

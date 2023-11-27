@@ -1,4 +1,4 @@
-from flask import Flask, render_template, jsonify, request, session, redirect, url_for, current_app
+from flask import Flask
 from socket_instance import socketio
 from views.user.signin_view import signin_blueprint
 from views.user.signup_view import signup_blueprint
@@ -11,6 +11,8 @@ from views.admin.dashboard_view import admin_dashboard_blueprint
 from views.admin.manage.user_view import user_manage_blueprint
 from views.admin.manage.remote_view import remote_servers_blueprint
 from views.user.linux_security_assistant_detail_view import linux_security_assistant_detail_blueprint
+from views.admin.manage.logs_view import logs_view_blueprint
+from views.admin.manage.evaluation_view import evaluation_view_blueprint
 from views.API.account.signup_api import signup_api_blueprint
 from views.API.account.signin_api import signin_api_blueprint
 from views.API.account.get_users_api import get_users_api_blueprint
@@ -21,6 +23,7 @@ from views.API.linux_command_assistant.terminal import terminal_socket_blueprint
 from views.API.remote.remote_servers_api import remote_api_blueprint
 from views.API.linux_security_assistant.policy import policy_api_blueprint
 from views.API.linux_security_assistant.save_result import save_result_api_blueprint
+from views.API.logs.logs_api import logs_api_blueprint
 from config import app
 app = Flask(__name__)
 socketio.init_app(app)
@@ -46,8 +49,12 @@ app.register_blueprint(admin_dashboard_blueprint)
 app.register_blueprint(user_manage_blueprint)
 # Remote Servers Manage Blueprint 경로: /views/admin/manage/remote_view.py
 app.register_blueprint(remote_servers_blueprint)
+# Logs View Blueprint 경로: /views/admin/manage/logs_view.py
+app.register_blueprint(logs_view_blueprint)
 # Linux Security Assistant Detail Blueprint 경로: /views/user/linux_security_assistant_detail_view.py
 app.register_blueprint(linux_security_assistant_detail_blueprint)
+# User evaluation view Blueprint 경로: /views/admin/manage/evaluation_view.py
+app.register_blueprint(evaluation_view_blueprint)
 
 
 """ API view blueprint """
@@ -73,6 +80,8 @@ app.register_blueprint(remote_api_blueprint)
 app.register_blueprint(policy_api_blueprint)
 
 app.register_blueprint(save_result_api_blueprint)
+
+app.register_blueprint(logs_api_blueprint)
 
 
 # app.py

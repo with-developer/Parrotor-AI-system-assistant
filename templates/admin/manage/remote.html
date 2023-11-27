@@ -30,6 +30,8 @@
                                 <th>IP 주소</th>
                                 <th>저장된 스크립트</th>
                                 <th>마지막 점검일</th>
+                                <th>실행</th>
+                                <th>서버 삭제</th>
                             </tr>
                         </thead>
                         <tbody id="usersTable" class="table-group-divider" style="font-size: small;">
@@ -100,9 +102,34 @@
             </div>
         </div>
         <!-- Add Remote Server Modal Section End -->
+
+        <!-- Remove Remote Server Modal Section Start-->
+        <!-- Delete Confirmation Modal -->
+        <div class="modal fade" id="deleteConfirmationModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="deleteModalLabel">서버 삭제 확인</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <p id="deleteServerName"></p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">취소</button>
+                        <button type="button" class="btn btn-danger" id="confirmDelete">삭제</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Remove Remote Server Modal Section End -->
         
         {% include '/template/foot.html' %}
         <script>
+
+            
+
+
             function createPaginationButtons(totalPages, currentPage) {
                 let buttons = '<nav aria-label="Page navigation"><ul class="pagination pagination-sm">';
 
@@ -145,15 +172,18 @@
                         for (var serverId in data.servers) {
                             var server = data.servers[serverId];
                             tableContent += "<tr>";
-                            tableContent += "<td>" + index + "</td>";
-                            tableContent += "<td>" + server.server_name + "</td>";
-                            tableContent += "<td>" + server.security_score + "</td>";
-                            tableContent += "<td>" + server.access_role + "</td>";
-                            tableContent += "<td>" + server.os + "</td>";
-                            tableContent += "<td>" + server.version + "</td>";
-                            tableContent += "<td>" + server.ip_address + "</td>";
-                            tableContent += "<td>" + server.saved_script + "</td>";
-                            tableContent += "<td>" + server.last_scan + "</td>";                        
+                            tableContent += "<td style='vertical-align: middle;'>" + index + "</td>";
+                            tableContent += "<td style='vertical-align: middle;'>" + server.server_name + "</td>";
+                            tableContent += "<td style='vertical-align: middle;'>" + server.security_score + "</td>";
+                            tableContent += "<td style='vertical-align: middle;'>" + server.access_role + "</td>";
+                            tableContent += "<td style='vertical-align: middle;'>" + server.os + "</td>";
+                            tableContent += "<td style='vertical-align: middle;'>" + server.version + "</td>";
+                            tableContent += "<td style='vertical-align: middle;'>" + server.ip_address + "</td>";
+                            tableContent += "<td style='vertical-align: middle;'>" + server.saved_script + "</td>";
+                            tableContent += "<td style='vertical-align: middle;'>" + server.last_scan + "</td>";
+                            tableContent += `<td><button class="btn btn-success btn-sm run-script" style="font-size: .675rem; padding: .2rem .4rem; white-space: nowrap;" data-server-name="${server.server_name}"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-caret-right-fill" viewBox="0 0 16 16" style="padding-top:.15rem;"><path d="m12.14 8.753-5.482 4.796c-.646.566-1.658.106-1.658-.753V3.204a1 1 0 0 1 1.659-.753l5.48 4.796a1 1 0 0 1 0 1.506z"/></svg>스크립트 실행</button></td>`;
+                            tableContent += `<td><button type='button' class="btn btn-danger btn-sm delete-server custom-delete-button" style="font-size: .675rem; padding: .2rem .4rem; white-space: nowrap;" data-server-id='` + serverId +`'><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-file-earmark-minus" viewBox="0 0 16 16" style="padding-top:.15rem;"><path d="M5.5 9a.5.5 0 0 1 .5-.5h4a.5.5 0 0 1 0 1H6a.5.5 0 0 1-.5-.5"/><path d="M14 4.5V14a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V2a2 2 0 0 1 2-2h5.5zm-3 0A1.5 1.5 0 0 1 9.5 3V1H4a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V4.5z"/></svg>삭제</button></td>`;
+                            
                             tableContent += "</tr>";
                             index++;
                         }
@@ -243,6 +273,64 @@
                     }
                 });
             });
+        });
+
+
+        document.addEventListener('click', function(event) {
+            if (event.target.classList.contains('run-script')) {
+                // 버튼의 data-server-name 속성 값 가져오기
+                var serverName = event.target.getAttribute('data-server-name');
+
+                // AJAX POST 요청 보내기
+                fetch('/API/remote/run-script', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ serverName: serverName })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    // 요청 성공 시 처리
+                    console.log('Success:', data);
+                })
+                .catch(error => {
+                    // 오류 처리
+                    console.error('Error:', error);
+                });
+            }
+        });
+        // delete remote server js
+        $(document).on("click", ".delete-server", function() {
+            var serverId = $(this).data("server-id");
+            var serverName = $(this).closest("tr").find("td:nth-child(2)").text();
+
+            $("#deleteServerName").text("Are you sure you want to delete " + serverName + "?");
+            $("#deleteConfirmationModal").modal('show');
+
+            
+            $("#confirmDelete").off('click').on('click', function() {
+                $.ajax({
+                    type: "POST",
+                    url: "/API/remote/remove-remote-server",
+                    contentType: "application/json",
+                    data: JSON.stringify({ server_identifier: serverName }),
+                    success: function(response) {
+                        $("#deleteConfirmationModal").modal('hide'); // 모달 숨기기
+                        if (response['status'] == 'success') {
+                            alert("Server deleted successfully");
+                            location.reload(); // 페이지 새로고침
+                        } else {
+                            alert("Error: " + response['message']);
+                        }
+                    },
+                    error: function() {
+                        $("#deleteConfirmationModal").modal('hide'); // 모달 숨기기
+                        alert("An error occurred while deleting the server.");
+                    }
+                });
+        });
+
         });
         </script>
     </body>

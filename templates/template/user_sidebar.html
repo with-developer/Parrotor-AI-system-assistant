@@ -1,54 +1,54 @@
-<div class="d-flex flex-column flex-shrink-0 p-3 text-white bg-dark sidebar-custom">
+<div class="d-flex flex-column flex-shrink-0 p-3 text-white bg-dark sidebar-custom" style="background-color: #9CBDE1 !important;">
     <a href="/" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-white text-decoration-none">
-        <img src="{{ url_for('static', filename='images/logo.png') }}" width="32" height="32"
+        <img src="{{ url_for('static', filename='images/logo3.png') }}" width="32" height="32"
             class="d-inline-block align-middle" alt="">
-        <span class="fs-4 sidebar-custom-text" style="margin-left:1rem;">Parrotor</span>
+        <span class="fs-4 sidebar-custom-text" style="margin-left:1rem; color:#233C64;">PARROTOR</span>
     </a>
     <i class='bx bx-chevron-right sidebar-toggle'></i>
-    <hr>
+    <hr style="color: #233C64; height: 3px;">
     <ul class="nav nav-pills flex-column mb-auto">
         
 
         <li>
             <a href="/dashboard/" class="nav-link text-white">
-                <img src="{{ url_for('static', filename='images/icons/icons8-dashboard-50.png') }}" width="16"
-                    height="16" class="d-inline-block align-middle" alt="">
-                <span class="sidebar-custom-text">Dashboard</span>
+                <img src="{{ url_for('static', filename='images/icons/icons8-dashboard-50.png') }}" width="20"
+                    height="20" class="d-inline-block align-middle" alt="">
+                <span class="sidebar-custom-text" style="color: #233C64 !important; font-size:15px;">Dashboard</span>
             </a>
         </li>
         <li>
             <a href="/linux_command_assistant/" class="nav-link text-white">
-                <img src="{{ url_for('static', filename='images/icons/icons8-linux-50.png') }}" width="16"
-                    height="16" class="d-inline-block align-middle" alt="">
-                <span class="sidebar-custom-text">Linux Command Assistant</span>
+                <img src="{{ url_for('static', filename='images/icons/icons8-linux-50.png') }}" width="20"
+                    height="20" class="d-inline-block align-middle" alt="">
+                <span class="sidebar-custom-text" style="color: #233C64 !important; font-size:15px;">Linux Command Assistant</span>
             </a>
         </li>
         <li>
             <a href="/linux_security_assistant/" class="nav-link text-white">
-                <img src="{{ url_for('static', filename='images/icons/icons8-security-configuration-50.png') }}" width="16"
-                    height="16" class="d-inline-block align-middle" alt="">
-                <span class="sidebar-custom-text">Linux Security Assistant</span>
+                <img src="{{ url_for('static', filename='images/icons/icons8-security-configuration-50.png') }}" width="20"
+                    height="20" class="d-inline-block align-middle" alt="">
+                <span class="sidebar-custom-text" style="color: #233C64 !important; font-size:15px;">Linux Security Assistant</span>
             </a>
         </li>
         {% if is_admin %}
-        <hr style="margin-top: 27rem;">
+        <hr style="margin-top: 27rem; color: #233C64; height: 3px;">
 
         <li>
             <a href="/jiranistrator/dashboard/" class="nav-link text-white" style="position: fixed; bottom:12%;">
-                <img src="{{ url_for('static', filename='images/icons/icons8-admin-50.png') }}" width="16"
-                    height="16" class="d-inline-block align-middle" alt="">
-                <span class="sidebar-custom-text">Admin Page</span>
+                <img src="{{ url_for('static', filename='images/icons/icons8-admin-50.png') }}" width="24"
+                    height="24" class="d-inline-block align-middle" alt="">
+                <span class="sidebar-custom-text" style="color: #233C64 !important; font-size:15px;">Admin Page</span>
             </a>
         </li>
         {% endif %}
         <li>
             <a href="#" class="nav-link text-white" style="position: fixed; bottom:7%;">
-                <img src="{{ url_for('static', filename='images/icons/icons8-logout-50.png') }}" width="16"
-                    height="16" class="d-inline-block align-middle" alt="">
-                <span class="sidebar-custom-text">Logout</span>
+                <img src="{{ url_for('static', filename='images/icons/icons8-logout-50.png') }}" width="20"
+                    height="20" class="d-inline-block align-middle" alt="" style="margin-left:.3rem;">
+                <span class="sidebar-custom-text" style="color: #233C64 !important; font-size:15px;">Logout</span>
             </a>
         </li>
     </ul>
-    <hr>
+    <hr style="color: #233C64; height: 3px;">
     
 </div>

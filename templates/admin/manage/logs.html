@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    {% include '/template/head.html' %}
+    <title>logs - Parrotor</title>
+  </head>
+  <body>
+    
+    <div class="sidebar">
+      {% include '/template/admin_sidebar.html' %}
+    </div>
+    
+    <div class="main_grid">
+      <div class="top-content">
+        {% include '/template/header.html' %}
+      </div>
+      <div class="bottom-content">
+        <div class="shadow-sm p-3 mb-5 bg-body rounded" style="margin: 1rem 2rem 0 2rem; ">
+          <table class="table caption-top table-white">
+              <caption>Chatting Logs data table</caption>
+              <thead>
+                  <tr style="font-size: 15px;">
+                      <th scope="col">#</th>
+                      <th style="max-width:120px; width: 120px; min-width: 120px; text-align: center;">사용자</th>
+                      <th>대화내역</th>
+                      <th style="max-width:150px; width: 150px; min-width: 150px; text-align: center">날짜</th>
+                  </tr>
+              </thead>
+              <tbody id="usersTable" class="table-group-divider" style="font-size: small;">
+                  
+              </tbody>
+          </table>
+          <div style="display: flex; justify-content: space-between;">
+              <div class="pagination-info" style="font-size:13px; color:#696969; margin-top:.3rem;">Showing <span id="startEntry">0</span> to <span id="endEntry">0</span> of <span id="totalEntries">0</span> entries</div>
+              <div class="pagination" style="margin-right: .4rem;"></div>
+          </div>
+      </div>
+      </div>
+      
+    </div>
+    {% include '/template/foot.html' %}
+  </body>
+  <script>
+    function createPaginationButtons(totalPages, currentPage) {
+      let buttons = '<nav aria-label="Page navigation"><ul class="pagination pagination-sm">';
+      const maxPagesToShow = 2; // 현재 페이지 양쪽에 표시할 최대 페이지 수
+
+      // 이전 페이지 버튼
+      if (currentPage > 1) {
+          buttons += `<li class="page-item"><a href="#" class="page-link prev" data-page="${currentPage - 1}">Previous</a></li>`;
+      } else {
+          buttons += `<li class="page-item disabled"><a class="page-link" href="#" tabindex="-1" aria-disabled="true">Previous</a></li>`;
+      }
+
+      // 페이지 번호 버튼
+      for (let i = 1; i <= totalPages; i++) {
+          // 현재 페이지 주변의 페이지만 표시
+          if (i === 1 || i === totalPages || i === currentPage || (i >= currentPage - maxPagesToShow && i <= currentPage + maxPagesToShow)) {
+              if (i === currentPage) {
+                  buttons += `<li class="page-item active" aria-current="page"><a href="#" class="page-link page-number" data-page="${i}">${i}</a></li>`;
+              } else {
+                  buttons += `<li class="page-item"><a href="#" class="page-link page-number" data-page="${i}">${i}</a></li>`;
+              }
+          }
+          // 생략 부분의 '...' 추가
+          else if (i === currentPage - maxPagesToShow - 1 || i === currentPage + maxPagesToShow + 1) {
+              buttons += `<li class="page-item disabled"><span class="page-link">...</span></li>`;
+          }
+      }
+
+      // 다음 페이지 버튼
+      if (currentPage < totalPages) {
+          buttons += `<li class="page-item"><a href="#" class="page-link next" data-page="${currentPage + 1}">Next</a></li>`;
+      } else {
+          buttons += `<li class="page-item disabled"><a class="page-link" href="#" tabindex="-1" aria-disabled="true">Next</a></li>`;
+      }
+
+      buttons += '</ul></nav>';
+
+      $(".pagination").html(buttons);
+  }
+
+
+    $(document).ready(function() {
+      var items_per_page = 10;
+      var max_length = 73; // 내용의 최대 표시 길이
+
+      function createMoreButton(content, containerId) {
+        return '<span id="' + containerId + '-preview">' + content.substring(0, max_length) + '...</span>' +
+              '<span id="' + containerId + '-full" style="display: none;">' + content + '</span>' +
+              '<button id="' + containerId + '-toggle" style="font-size:.675rem;" class="btn btn-outline-secondary btn-sm" onclick="toggleContent(\'' + containerId + '\')"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" class="bi bi-arrow-down-square-fill" viewBox="0 0 16 16" style="margin-top:.3rem;"><path d="M2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2zm6.5 4.5v5.793l2.146-2.147a.5.5 0 0 1 .708.708l-3 3a.5.5 0 0 1-.708 0l-3-3a.5.5 0 1 1 .708-.708L7.5 10.293V4.5a.5.5 0 0 1 1 0"/></svg>더보기</button>';
+      }
+
+      window.toggleContent = function(containerId) {
+        var isFullContentVisible = $('#' + containerId + '-full').is(':visible');
+
+        if (!isFullContentVisible) {
+            $('#' + containerId + '-preview').hide();
+            $('#' + containerId + '-full').show();
+            $('#' + containerId + '-toggle').html('<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" class="bi bi-arrow-up-square-fill" viewBox="0 0 16 16" style="margin-top:.3rem;"><path d="M2 16a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2zm6.5-11.5v5.793l-2.146 2.147a.5.5 0 0 1-.708-.708l3-3a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1-.708.708L8.5 10.293V4.5a.5.5 0 0 1 1 0z"/></svg>숨기기');
+        } else {
+            $('#' + containerId + '-preview').show();
+            $('#' + containerId + '-full').hide();
+            $('#' + containerId + '-toggle').html('<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" class="bi bi-arrow-down-square-fill" viewBox="0 0 16 16" style="margin-top:.3rem;"><path d="M2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2zm6.5 4.5v5.793l2.146-2.147a.5.5 0 0 1 .708.708l-3 3a.5.5 0 0 1-.708 0l-3-3a.5.5 0 1 1 .708-.708L7.5 10.293V4.5a.5.5 0 0 1 1 0"/></svg>더보기');
+        }
+      };
+
+
+      function loadPage(pageNumber) {
+        $.post("/API/logs/get", { page: pageNumber }, function(data) {
+            console.log(data);
+
+            var tableContent = "";
+            var index = 1 + (pageNumber - 1) * 10;
+            for (var userId in data.logs) {
+                var user = data.logs[userId];
+                var questionId = 'question-' + index;
+                var answerId = 'answer-' + index;
+
+                tableContent += "<tr>";
+                tableContent += "<td rowspan='2' style='vertical-align: middle; text-align: center;'>" + index + "</td>";
+                tableContent += "<td rowspan='2' style='vertical-align: middle; text-align: center'>" + user.user_id + "</td>";
+                tableContent += "<td>" + (user.question.length > max_length ? createMoreButton(user.question, questionId) : user.question) + "</td>";
+                tableContent += "<td rowspan='2' style='vertical-align: middle; text-align: center'>" + user.time + "</td>";
+                tableContent += "</tr>";
+                tableContent += "<tr style='border-bottom:groove;'>";
+                tableContent += "<td>" + (user.answer.length > max_length ? createMoreButton(user.answer, answerId) : user.answer) + "</td>";
+                tableContent += "</tr>";
+                index++;
+            }
+              var startEntry = (pageNumber - 1) * items_per_page + 1;
+              var endEntry = Math.min(pageNumber * items_per_page, data.total_users);
+              $("#startEntry").text(startEntry);
+              $("#endEntry").text(endEntry);
+              $("#totalEntries").text(data.total_users);
+              $("#usersTable").html(tableContent);
+              createPaginationButtons(data.total_pages, pageNumber);
+
+            }).fail(function() {
+              console.error("요청에 실패했습니다.");
+            });
+        }loadPage(1); // 초기 페이지 로딩
+
+    // 페이지네비게이션 버튼 클릭 이벤트
+    $(document).on("click", ".page-number, .prev, .next", function(e) {
+      e.preventDefault();
+      const pageNumber = $(this).data("page");
+      loadPage(pageNumber);
+    });
+});
+
+</script>
+</html>

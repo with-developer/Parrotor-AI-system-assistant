@@ -9,14 +9,22 @@
           margin: 5px;
           padding: 5px;
           border-radius: 5px;
-          background-color: #e6f7ff;
+          background-color: #FBFAEC;
       }
       .bot-message {
           text-align: left;
           margin: 5px;
           padding: 5px;
           border-radius: 5px;
-          background-color: #f2f2f2;
+          background-color: #233C64;
+          color:white;
+      }
+      .xterm .xterm-viewport {
+        border-radius: 0 0 2rem 2rem;
+      }
+      .xterm .xterm-screen canvas {
+        border-radius: 0 0 2rem 2rem;
+        padding: 1rem;
       }
   </style>
   <link rel="stylesheet" href="https://unpkg.com/xterm@4.11.0/css/xterm.css"/>
@@ -33,7 +41,7 @@
       </div>
       <div class="bottom-content" style="display: flex;">
         <!-- Prompt HTML Section Start -->
-        <div class="shadow-sm p-3 mb-5 bg-body rounded" style="margin: 1rem 1rem 0 2rem !important; height: 86vh; width: 50%;">
+        <div class="shadow-sm p-3 mb-5 bg-body rounded" style="margin: 1rem 1rem 0 2rem !important; height: 86vh; width: 50%; border-radius: 2rem!important; box-shadow: 0 1rem 3rem rgba(0,0,0,.3)!important;">
           <div chat-history style="height: 74vh; overflow: scroll; font-size: 14px;"></div>
           <div class="form-floating mb-3" style="display: flex; margin-top:1rem;">
             <textarea class="form-control" id="prompt-textarea" placeholder="Send a message" tabindex="0" rows="1" data-id="request-:r22:-3" style="resize: none; max-height: 200px; height: 40px; overflow-y: hidden; padding-top:.55rem; margin-right: .3rem;"></textarea>
@@ -43,19 +51,29 @@
         <!-- Prompt HTML Section End -->
 
         <!-- Terminal HTML Section Start -->
-        <div class="shadow-sm bg-body rounded" style="margin: 1rem 2rem 0 1rem; height: 95%; width: 50%;">
+        <div class="shadow-sm bg-body rounded" style="margin: 1rem 2rem 0 1rem; height: 89%; width: 50%; border-radius: 2rem!important; box-shadow: 0 1rem 3rem rgba(0,0,0,.3)!important;">
           <div style="height: 86%;">
-            
-              <button class="btn btn-sm btn-primary dropdown-toggle" style="font-size: .67rem;" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                Select remote server
+            <img src="{{ url_for('static', filename='images/icons/icons8-linux-50.png') }}" width="16"
+            height="16" class="d-inline-block align-middle" alt="" style="margin-left:1.4rem;">
+              <button class="btn btn-sm btn-outline-secondary" style="margin-left: .4rem; font-size: .67rem;" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                서버 선택
               </button>
               <ul class="dropdown-menu">
               </ul>
 
-            <span style="font-size: small">status:
-              <span style="font-size: small" id="status">Select the server with the button left.</span>
+            <span style="font-size: small">
+              <span style="font-size: small" id="status"></span>
             </span>
+            <div style="display: inline; float: right; margin-right: 1.4rem;">
+            <img src="{{ url_for('static', filename='images/icons/icons8-filled-circle-30-red.png') }}" width="16"
+            height="16" class="d-inline-block align-middle" alt="">
+            <img src="{{ url_for('static', filename='images/icons/icons8-filled-circle-30-yellow.png') }}" width="16"
+            height="16" class="d-inline-block align-middle" alt="">
+            <img src="{{ url_for('static', filename='images/icons/icons8-filled-circle-30-green.png') }}" width="16"
+            height="16" class="d-inline-block align-middle" alt="">
+            </div>
             <div style="width: 100%; height: 90%" id="terminal"></div>
+
           </div>
         </div>
         <!-- Terminal HTML Section End -->
@@ -78,14 +96,18 @@
       const chatHistoryDiv = document.querySelector("[chat-history]");
       const messageDiv = document.createElement("div");
       messageDiv.style.display = "flex";
-      messageDiv.style.borderRadius = "5px"
+      messageDiv.style.borderRadius = "1rem"
+      
+      
 
 
 
       if (type === "user") {
-        messageDiv.style.backgroundColor = "#e6f7ff";
+        messageDiv.style.backgroundColor = "#FBFAEC";
         messageDiv.style.justifyContent = "right";
-        messageDiv.style.margin = "0 0 5px 0";
+        messageDiv.style.margin = "0 0 10px 0";
+        messageDiv.style.boxShadow = "0 .225rem .25rem rgba(0,0,0,.175)";
+        
         const userIcon = document.createElement("img");
         userIcon.src = "{{ url_for('static', filename='images/icons/icons8-user-60.png') }}"; // 봇 아이콘 이미지 파일 경로
         userIcon.alt = "User Icon";
@@ -101,10 +123,11 @@
         messageDiv.appendChild(userIcon);
         
       } else if (type === "bot") {
-        messageDiv.style.backgroundColor = "#f2f2f2";
-        messageDiv.style.margin = "0 0 5px 0";
+        messageDiv.style.backgroundColor = "#233C64";
+        messageDiv.style.margin = "0 0 10px 0";
+        messageDiv.style.boxShadow = "0 .225rem .25rem rgba(0,0,0,.175)";
         const botIcon = document.createElement("img");
-        botIcon.src = "{{ url_for('static', filename='images/logo3.png') }}"; // 봇 아이콘 이미지 파일 경로
+        botIcon.src = "{{ url_for('static', filename='images/logo.png') }}"; // 봇 아이콘 이미지 파일 경로
         botIcon.alt = "Bot Icon";
         botIcon.className = "message-icon";
         botIcon.width = "32";
@@ -169,11 +192,13 @@
             const chatHistoryDiv = document.querySelector("[chat-history]");
             const messageDiv = document.createElement("div");
             messageDiv.style.display = "flex";
-            messageDiv.style.borderRadius = "5px"
-            messageDiv.style.backgroundColor = "#f2f2f2";
-            messageDiv.style.margin = "0 0 5px 0";
+            messageDiv.style.borderRadius = "1rem"
+            messageDiv.style.backgroundColor = "#233C64";
+            messageDiv.style.margin = "0 0 10px 0";
+            messageDiv.style.boxShadow = "0 .225rem .25rem rgba(0,0,0,.175)";
+            
             const botIcon = document.createElement("img");
-            botIcon.src = "{{ url_for('static', filename='images/logo3.png') }}"; // 봇 아이콘 이미지 파일 경로
+            botIcon.src = "{{ url_for('static', filename='images/logo.png') }}"; // 봇 아이콘 이미지 파일 경로
             botIcon.alt = "Bot Icon";
             botIcon.className = "message-icon";
             botIcon.width = "32";
@@ -267,7 +292,10 @@
       cursorBlink: true,
       macOptionIsMeta: true,
       scrollback: true,
-      fontSize: 12,
+      fontSize: 14,
+      theme: {
+        background: '#233C64'
+      }
     });
     term.attachCustomKeyEventHandler(customKeyEventHandler);
 
@@ -324,7 +352,7 @@
       term.reset();
       const test_val = serverId; // 선택한 서버의 ID를 전달
       socket.emit("connect-server", test_val);
-      status.innerHTML = '<span style="background-color: lightgreen;">' + serverName + ' is connected</span><input type="hidden" id="hiddenServerId" value="' + serverId + '">';
+      status.innerHTML = '<span style="background-color: #fff;">' + serverName + ' 서버가 연결됨</span><input type="hidden" id="hiddenServerId" value="' + serverId + '">';
 
       
     }
