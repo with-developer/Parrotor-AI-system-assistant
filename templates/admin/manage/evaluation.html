@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    {% include '/template/head.html' %}
+    <title>logs - Parrotor</title>
+  </head>
+  <body>
+    
+    <div class="sidebar">
+      {% include '/template/admin_sidebar.html' %}
+    </div>
+    
+    <div class="main_grid">
+      <div class="top-content">
+        {% include '/template/header.html' %}
+      </div>
+      <div class="bottom-content">
+        <div class="shadow-sm p-3 mb-5 bg-body rounded" style="margin: 1rem 2rem 0 2rem; ">
+          <table class="table caption-top table-white">
+              <caption>Chatting Logs data table</caption>
+              <thead>
+                  <tr style="font-size: 15px;">
+                      <th scope="col">#</th>
+                      <th style="max-width:120px; width: 120px; min-width: 120px; text-align: center;">사용자</th>
+                      <th>대화내역</th>
+                      <th style="max-width:150px; width: 150px; min-width: 150px; text-align: center">날짜</th>
+                  </tr>
+              </thead>
+              <tbody id="usersTable" class="table-group-divider" style="font-size: small;">
+                  
+              </tbody>
+          </table>
+          <div style="display: flex; justify-content: space-between;">
+              <div class="pagination-info" style="font-size:13px; color:#696969; margin-top:.3rem;">Showing <span id="startEntry">0</span> to <span id="endEntry">0</span> of <span id="totalEntries">0</span> entries</div>
+              <div class="pagination" style="margin-right: .4rem;"></div>
+          </div>
+      </div>
+      </div>
+      
+    </div>
+    {% include '/template/foot.html' %}
+  </body>
+  <script>
+    
+
+</script>
+</html>
