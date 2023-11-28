@@ -242,7 +242,6 @@
                     chatHistoryDiv.scrollTop = chatHistoryDiv.scrollHeight;
                     
                     if (done) {
-                      console.log("done!");
                       const hasCodeBlock = messageTextDiv.innerHTML.includes("```");
                       if (hasCodeBlock) {
                           const codeContent = messageTextDiv.innerHTML.replace(/```sh?<br\s*\/?>\n?([\s\S]+?)<br\s*\/?>\n?```/g, (match, p1) => {
@@ -266,7 +265,6 @@
 
                     if (chunk) {
                         const decodedMessage = chunk.split(",").map(code => String.fromCharCode(code)).join("");
-                        console.log(decodedMessage)
                         messageTextDiv.innerText += decodedMessage;
                     }
                     stream();
@@ -307,13 +305,11 @@
     term.open(document.getElementById("terminal"));
     fit.fit();
     term.resize(14, 82);
-    // console.log(`size: ${term.cols} columns, ${term.rows} rows`);
     fit.fit();
     term.writeln("1. You can copy with ctrl+shift+x");
     term.writeln("2. You can paste with ctrl+shift+v");
     
     term.onData((data) => {
-      console.log("browser terminal received new data:", data);
       socket.emit("pty-input", { input: data });
     });
 
@@ -324,7 +320,6 @@
 
     
     socket.on("pty-output", function (data) {
-      console.log("new output received from server:", data.output);
       term.write(data.output);
     });
     
@@ -341,7 +336,6 @@
     function fitToscreen() {
       fit.fit();
       const dims = { cols: term.cols, rows: term.rows };
-      console.log("sending new dimensions to server's pty", dims);
       socket.emit("resize", dims);
       // socket.emit("pty-init","");
 

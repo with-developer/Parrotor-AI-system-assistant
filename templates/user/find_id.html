@@ -102,7 +102,6 @@
                         contentType: 'application/json;charset=UTF-8',
                         type: 'POST',
                         success: function(response) {
-                            console.log(response);
                             if(response.status === 'success') {
                                 alert("Your ID: " + response.masked_user_id);
                             } else if(response.status === 'fail') {

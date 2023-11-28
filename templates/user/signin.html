@@ -111,7 +111,6 @@
                         contentType: 'application/json;charset=UTF-8',
                         type: 'POST',
                         success: function(response) {
-                            console.log(response);
                             if(response.status === 'success') {
                                 // 로그인이 성공적으로 완료되면 서버에서 받은 토큰을 쿠키에 저장합니다.
                                 document.cookie = "access_token=" + response.token + ";path=/;samesite=strict";

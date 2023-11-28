@@ -165,7 +165,6 @@
                 var items_per_page = 10;
                 function loadPage(pageNumber) {
                     $.post("/API/remote/get-servers", { page: pageNumber }, function(data) {
-                        console.log(data);
 
                         var tableContent = "";
                         var index = 1 + (pageNumber - 1) * 10;
@@ -203,7 +202,6 @@
                             rolesContent += `<label class="form-check-label" for="role_${data.roles[i]}">${data.roles[i]}</label>`;
                             rolesContent += `</div>`;
                         }
-                        console.log(data.roles);
                         $('#access_role').html(rolesContent);
 
 
@@ -231,7 +229,6 @@
                 $("#access_role .form-check-input:checked").each(function () {
                     accessRole.push($(this).val());
                 });
-                console.log(accessRole)
                 var serverIp = $('#server_ip').val();
                 var serverPort =$('#server_port').val();
                 var userName = $('#username').val();
@@ -257,7 +254,6 @@
                     success: function (response) {
                         $("#loadingSpinner").hide();
                         $('#overlay').hide();
-                        console.log(response);
 
                         if (response['status'] == 'success') {
                             alert(response['message']);
@@ -292,11 +288,11 @@
                 .then(response => response.json())
                 .then(data => {
                     // 요청 성공 시 처리
-                    console.log('Success:', data);
+                    a='a';
                 })
                 .catch(error => {
                     // 오류 처리
-                    console.error('Error:', error);
+                
                 });
             }
         });

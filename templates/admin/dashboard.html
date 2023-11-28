@@ -15,10 +15,151 @@
         {% include '/template/header.html' %}
       </div>
       <div class="bottom-content">
-        
+        <div class="shadow-sm p-3 mb-5 bg-body rounded" style="margin: 1rem 2rem 0 2rem; ">
+          <div style="height: 300px; display: flex;">
+            <div class="left-div">
+              <div class="shadow-sm p-3 mb-4 rounded" style="background-color: #f0f0f0; width: 140px; height: 140px; text-align: center;">전체 사용자<div style="top: 0px;position: relative; text-align: center;"><span style="font-size: 3rem;">30명</span></div></div>
+              <div class="shadow-sm p-3 mb-4 rounded" style="background-color: #f0f0f0; width: 140px; height: 140px; text-align: center;">전체 원격서버<div style="top: 0px;position: relative; text-align: center;"><span style="font-size: 3rem;">10대</span></div></div>
+            </div>
+            <div>
+              <div class="shadow-sm p rounded" style="margin-left:2rem;">
+                <canvas id="bubbleChart" width="300" height="300"></canvas>
+              </div>
+            </div>
+            
+            
+            
+          </div>
+          
+          <div>
+            <canvas id="log_chart" width="1250" height="300"></canvas>
+          </div>
+
+        </div>
       </div>
       
     </div>
     {% include '/template/foot.html' %}
   </body>
+  <script>
+    // 차트 데이터를 가져오고 그리는 함수
+    function fetchChartData() {
+        $.ajax({
+            url: '/API/logs/chart',
+            type: 'GET',
+            success: function(response) {
+                if(response.status === "success") {
+                    var labels = response.message.map(log => log._id);
+                    var data = response.message.map(log => log.count);
+
+                    var ctx = document.getElementById('log_chart').getContext('2d');
+                    var logChart = new Chart(ctx, {
+                        type: 'line',
+                        data: {
+                            labels: labels,
+                            datasets: [{
+                                label: 'PARROTOR 사용량',
+                                data: data,
+                                backgroundColor: 'rgba(0, 123, 255, 0.5)',
+                                borderColor: 'rgba(0, 123, 255, 1)',
+                                borderWidth: 1
+                            }]
+                        },
+                        options: {
+                            responsive: false,
+                            scales: {
+                                y: {
+                                    beginAtZero: true
+                                }
+                            }
+                        }
+                    });
+                } else {
+                    console.error('Error fetching data:', response.message);
+                }
+            },
+            error: function(error) {
+                console.error('Error:', error);
+            }
+        });
+    }
+    function bubbleChart() {
+    $.ajax({
+        url: '/API/logs/bubble',
+        type: 'GET',
+        success: function(response) {
+            if(response.status === "success") {
+                var commandData = response.message.map(function(item, index) {
+                    return {
+                        x: index,
+                        y: Math.random() * 100, // 예시로 랜덤한 y값을 사용
+                        r: Math.sqrt(item.totalUsage) * 5, // 버블 크기를 위한 계산
+                        command: item._id
+                    };
+                });
+
+                var bubbleChartPlugin = {
+                    id: 'bubbleChartPlugin',
+                    afterDatasetsDraw: function(chart) {
+                        var ctx = chart.ctx;
+                        chart.data.datasets.forEach(function(dataset, i) {
+                            var meta = chart.getDatasetMeta(i);
+                            if (!meta.hidden) {
+                                meta.data.forEach(function(element, index) {
+                                    ctx.fillStyle = 'rgb(0, 0, 0)'; // 텍스트 색상
+                                    var fontSize = 14; // 텍스트 크기
+                                    var fontStyle = 'normal';
+                                    var fontFamily = 'Helvetica Neue';
+                                    ctx.font = Chart.helpers.fontString(fontSize, fontStyle, fontFamily);
+
+                                    // 데이터에서 명령어 텍스트 가져오기
+                                    var dataString = dataset.data[index].command;
+
+                                    // 텍스트 중심 계산
+                                    ctx.textAlign = 'center';
+                                    ctx.textBaseline = 'middle';
+                                    var padding = 5;
+                                    var position = element.tooltipPosition();
+                                    ctx.fillText(dataString, position.x, position.y - (fontSize / 2) - padding);
+                                });
+                            }
+                        });
+                    }
+                };
+
+                var ctx = document.getElementById('bubbleChart').getContext('2d');
+                var bubbleChart = new Chart(ctx, {
+                    type: 'bubble',
+                    data: {
+                        datasets: [{
+                            label: '명령어별 자주 묻는 질문',
+                            data: commandData,
+                            backgroundColor: 'rgba(54, 162, 235, 0.5)'
+                        }]
+                    },
+                    options: {
+                        responsive: false,
+                        scales: {
+                            y: {
+                                beginAtZero: true
+                            }
+                        }
+                    },
+                    plugins: [bubbleChartPlugin]
+                });
+            } else {
+                console.error('Error fetching data:', response.message);
+            }
+        },
+        error: function(error) {
+            console.error('Error:', error);
+        }
+    });
+}
+
+$(document).ready(function() {
+    fetchChartData();
+    bubbleChart();
+});
+</script>
 </html>

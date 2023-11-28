@@ -108,7 +108,6 @@
 
       function loadPage(pageNumber) {
         $.post("/API/logs/get", { page: pageNumber }, function(data) {
-            console.log(data);
 
             var tableContent = "";
             var index = 1 + (pageNumber - 1) * 10;

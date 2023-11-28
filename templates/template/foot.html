@@ -5,6 +5,7 @@
     <script src="{{ url_for('static', filename='js/jquery/jquery-3.7.1.min.js') }}" crossorigin="anonymous"></script>
     <!-- Code Block Js -->
     <script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js" integrity="sha512-ElRFoEQdI5Ht6kZvyzXhYG9NqjtkmlkfYk0wr6wHxU9JEHakS7UJZNeml5ALk+8IKlU6jDgMabC3vkumRokgJA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <!-- Bootstrap tooltip initialize -->
     <script>
       const body = document.querySelector('body');
@@ -41,20 +42,16 @@
 
       document.addEventListener("DOMContentLoaded", function () {
         function activateCurrentPageButton() {
-          console.log("start")
           let currentPath = window.location.pathname;
           if (currentPath.startsWith("/jiranistrator/")){
-            console.log(currentPath)
           }else{
             currentPath = "/"+currentPath.split('/').filter(Boolean)[0]+"/";
           }
-          console.log(currentPath)
           const allPageButtons = document.querySelectorAll(".nav-link");
           allPageButtons.forEach((button) => {
             button.classList.remove("active");
           });
           const currentPageButton = document.querySelector(`a[href='${currentPath}']`);
-          console.log(currentPageButton)
           if (currentPageButton) {
             
             currentPageButton.classList.add("active");
