@@ -63,6 +63,7 @@
     color: #8D8BA7;
     padding-left: 20px; /* 내부 여백 설정 */
 }
+
 #signup_form {
     display: flex;
     flex-direction: column;

@@ -14,33 +14,35 @@
         <style>
             body {
                 background-image: url("{{ url_for('static', filename='images/login-page-bg.png') }}");
-                background-size: contain; /* 또는 contain */
                 background-position: center;
-                background-repeat: no-repeat;
-                background-attachment: fixed;
             }
         </style>
     </head>
     
-    <body class="signin_up" style="display: unset;">
-        <div style="position: relative; width: 100%; height: 100%;">
-            <!-- Form container -->
-            <div style="position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); width: 520px;">
-                <div class="form p-3 mb-5">
-                    <form id="signin_form" method="post">
-                        <div class="form-group" style="margin-bottom: 20px;">
-                            <input type="text" class="form-control" id="user_id" placeholder="abc@email.com">
+    <body class="signin_up" style="display: unset;">      
+            <img src="static/images/logo3.png" alt="logo3">
+            <div class="assistant-description">
+                사용자의 편의를 고려한, <br/>리눅스 및 보안 업무 어시스턴트<br/>
+            </div>            
+            <div class="parrotor-title">Parrotor</div>
+                    <!-- Form container -->
+                    <form id="signin_form" method="post">                        
+                        <div class="input-container">
+                            <div class="form-group">
+                                <label for="user_id" class="form-label">이메일</label>
+                                <input type="text" class="form-control" id="user_id" placeholder="abc@email.com">
+                            </div>
+                            <div class="form-group">
+                                <label for="user_pw" class="form-label">비밀번호</label>
+                                <input type="password" class="form-control" id="user_pw" aria-describedby="passwordHelp" placeholder="Password">
+                            </div>
                         </div>
-                        <div class="form-group" style="margin-bottom: 20px;">
-                            <input type="password" class="form-control" id="user_pw" placeholder="Password">
-                        </div>
-                        <button type="submit" class="btn btn-primary btn-lg btn-block">로그인</button>
-                        
+                        <button type="submit" class="loginbtn loginbtn-primary loginbtn-lg loginbtn-block">로그인</button>
                     </form>
                     <div class="login_options">
-                        <button type="button" class="btn btn-outline-dark" onClick="location.href='/find_id'">아이디 찾기</button><span>|</span>
-                        <button type="button" class="btn btn-outline-dark" onClick="location.href='/find_pw'">비밀번호 찾기</button><span>|</span>
-                        <button type="button" class="btn btn-outline-dark" onClick="location.href='/signup'">회원가입</button>
+                        <button type="button" class="btn" onClick="location.href='/find_id'">아이디 찾기</button><span>|</span>
+                        <button type="button" class="btn" onClick="location.href='/find_pw'">비밀번호 찾기</button><span>|</span>
+                        <button type="button" class="btn" onClick="location.href='/signup'">회원가입</button>
                     </div>
                 </div>
             </div>
@@ -48,13 +50,12 @@
         
         
             <!-- Copyright -->
-            <footer class="footer">
-                <div class="text-center p-3">
-                © 2023 Copyright:
-                <a class="text-dark" href="#">Team Jirangobie</a>
-                </div>
-            </footer>
+            <div class="text-center p-3">
+              © 2023 Copyright:
+              <a class="text-dark" href="#">Team Jirangobie</a>
+            </div>
             <!-- Copyright -->
+
 
 
         <!-- Javascript import section start -->
