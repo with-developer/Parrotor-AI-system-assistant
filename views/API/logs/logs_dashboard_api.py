@@ -50,7 +50,6 @@ def chart():
     ]
 
     logs_by_date = list(db.log.aggregate(pipeline))
-    print(logs_by_date)
     
 
     

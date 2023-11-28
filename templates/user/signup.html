@@ -7,7 +7,7 @@
 
         <!-- CSS import section start -->
         <!-- main CSS -->
-        <link href="{{ url_for('static', filename='css/main.css') }}" rel="stylesheet" crossorigin="anonymous">
+        <link href="{{ url_for('static', filename='css/figma-signup.css') }}" rel="stylesheet" crossorigin="anonymous">
         <!-- Bootstrap CSS -->
         <link href="{{ url_for('static', filename='css/bootstrap/bootstrap.min.css') }}" rel="stylesheet" crossorigin="anonymous">
         <!-- CSS import section end -->
@@ -16,76 +16,51 @@
     </head>
     
     <body class="signin_up" style="display: unset;">
-        <nav class="navbar navbar-light bg-light" style="justify-content: center; background-color: #233C63 !important;">
-            <a class="navbar-brand" href="/">
-            <img src="{{ url_for('static', filename='images/logo.png') }}" width="30" height="30" class="d-inline-block align-top" alt="">
-            <span style="color:#fff;">Parrotor</span>
-            </a>
-        </nav>
+        
 
-        <div class="form shadow-sm p-3 mb-5 bg-white rounded">
-            <h2 style="margin-bottom: 2rem;">회원가입</h2>
+            <div style="width: 100%;height: 10px;margin-top: 80px; text-align: center; color: #233C64; font-size: 14px; font-family: Poppins; font-weight: 600; text-transform: uppercase; line-height: 16px; letter-spacing: 1px; word-wrap: break-word">Parrotor</div>
+            <div class="signup-title">
+                회원가입 이후<br/>이용하세요.
+            </div>
+            
             <form id="signup_form" method="post">
-                <div class="form-group">
-                    <input type="text" class="form-control" id="user_name"placeholder="이름을 입력하세요.">
+                <div class="input-container">
+                    <div class="form-group">
+                        <label for="user_name" class="form-label">이름</label>
+                        <input type="text" class="form-control" id="user_name" placeholder="홍길동">
+                    </div>
+                    <div class="form-group">
+                        <label for="user_id" class="form-label">이메일</label>
+                        <input type="text" class="form-control" id="user_id" placeholder="abc@email.com">
+                    </div>
+                    <div class="form-group">
+                        <label for="user_pw" class="form-label">비밀번호</label>
+                        <input type="password" class="form-control" id="user_pw" aria-describedby="passwordHelp" placeholder="Password">
+                    </div>
+                    <div class="form-group">
+                        <label for="user_pw_check" class="form-label">비밀번호 재입력</label>
+                        <input type="password" class="form-control" id="user_pw_check" placeholder="Confirm Password">
+                    </div>
                 </div>
-                <div class="form-group">
-                    <input type="text" class="form-control" id="user_id" placeholder="아이디를 입력하세요.">
-                </div>
-                <div class="form-group"  style="text-align: left;">
-                    <input type="password" class="form-control" id="user_pw" aria-describedby="passwordHelp" placeholder="비밀번호를 입력하세요." style="margin-bottom: 0;">
-                    <small id="passwordHelp" class="form-text text-muted" style="margin-left:.5rem;">영문 소문자, 대문자, 숫자 섞어서 10자 이상</small>
-                </div>
-                <div class="form-group">
-                    <input type="password" class="form-control" id="user_pw_check" placeholder="비밀번호를 재입력하세요.">
-                </div>
-
-                <button type="submit" class="btn btn-primary btn-lg btn-block" style="width: 100%;">회원가입</button>
-                
+                <button type="submit" class="btn btn-primary btn-lg btn-block signup-button">회원가입</button>
             </form>
+            
+            
             <div class="login_options">
-                <button type="button" class="btn btn-outline-dark" onClick="location.href='/find_id'">아이디 찾기</button><span>|</span>
-                <button type="button" class="btn btn-outline-dark" onClick="location.href='find_pw'">비밀번호 찾기</button><span>|</span>
-                <button type="button" class="btn btn-outline-dark" onClick="location.href='/'">로그인</button>
+                <span>아이디가 존재하나요? </span>
+                <button type="button" class="btn btn-outline-dark" onClick="location.href='/'">로그인 하기</button>
             </div>
-        </div>
+            
+        
 
-        <footer class="bg-light text-center text-lg-start">
-            <!-- Grid container -->
-            <div class="container p-4">
-              <!--Grid row-->
-              <div class="row">
-                <!--Grid column-->
-                <div class="col-lg-6 col-md-12 mb-4 mb-md-0">
-                  <h5 class="text-uppercase">프로젝트의 설명이 들어갈 예정입니다.</h5>
-          
-                  <p>
-                    프로젝트의 설명이 들어갈 예정입니다.
-                  </p>
-                </div>
-                <!--Grid column-->
-          
-                <!--Grid column-->
-                <div class="col-lg-6 col-md-12 mb-4 mb-md-0">
-                  <h5 class="text-uppercase">프로젝트의 설명이 들어갈 예정입니다.</h5>
-          
-                  <p>
-                    프로젝트의 설명이 들어갈 예정입니다.
-                  </p>
-                </div>
-                <!--Grid column-->
-              </div>
-              <!--Grid row-->
-            </div>
-            <!-- Grid container -->
-          
+                     
             <!-- Copyright -->
-            <div class="text-center p-3" style="background-color: rgba(0, 0, 0, 0.2);">
+            <div class="text-center p-3">
               © 2023 Copyright:
               <a class="text-dark" href="#">Team Jirangobie</a>
             </div>
             <!-- Copyright -->
-          </footer>
+
 
         <!-- Javascript import section start -->
         <!-- Bootstrap JS -->
