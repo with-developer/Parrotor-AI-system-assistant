@@ -1,0 +1,155 @@
+/*기존 코드*/
+@font-face {
+    font-family: 'NanumGithicCoding';
+    src: url('/static/fonts/NanumGothicCoding-Bold.ttf') format('truetype'),
+        url('/static/fonts/NanumGothicCoding.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+body {
+    font-family: 'NanumGithicCoding', sans-serif !important;
+    overflow: auto;
+}
+body, html {
+    margin: 0;
+    display: flex;
+    height: 100%;
+    width: 100%;
+    background-color: #f0f0f0;
+}
+.main_grid {
+    flex-grow: 1;  /* 남은 공간을 모두 차지 */
+    display: flex;
+    flex-direction: column;
+}
+
+.top-content {
+    background-color: #f0f0f0;
+    height: auto;
+}
+
+.bottom-content {
+    background-color: #f0f0f0;
+    flex-grow: 1;  /* 남은 공간을 모두 차지 */
+}
+
+.signin_up {
+    text-align: center;
+    background-color: #f0f0f0;
+}
+
+.signin_up .form {
+    width: 50vw;
+    display: inline-block;
+    margin: 3rem 2rem 3rem 2rem;
+    padding: 2rem;
+    background-color: #fff;
+}
+
+.signin_up .form .form-control {
+    margin: 1.5rem 0rem 1rem 0rem;
+}
+
+.signin_up .btn-primary {
+    background-color: #233C63;
+    border-color: #233C63;
+}
+
+
+.signin_up .btn-primary:hover {
+    background-color: #1a2d4b;
+    border-color: #1a2d4b;
+}
+
+.signin_up .btn-outline-dark {
+    margin: 1rem .2rem;
+    border-color: #fff;
+    font-size: .9rem;
+}
+
+.signin_up .login_options {
+    display: block;
+}
+
+.navbar {
+    margin:.5rem .5rem .5rem 1.5rem;
+}
+.navbar .container-fluid{
+    font-size: 20px;
+}
+
+.navbar .none-dropdown-icon .dropdown-toggle::after {
+    content: none;
+}
+
+.navbar .sm-text{
+    font-size:x-small;
+    font-weight: lighter;
+}
+.navbar .md-text{
+    font-size: 1em;
+    font-weight: lighter;
+    font-family: sans-serif;
+}
+
+
+.navbar .dropdown-menu {
+    font-weight: 100;
+    font-size: small;
+}
+
+.tooltip .tooltip-inner {
+    font-size: 5px;
+}
+
+::placeholder { /* Chrome, Firefox, Opera, Safari 10.1+ */
+    color: gray !important; 
+    opacity: 1; /* Firefox */
+}
+
+:-ms-input-placeholder { /* Internet Explorer 10-11 */
+    color: gray !important;
+}
+
+::-ms-input-placeholder { /* Microsoft Edge */
+    color: gray !important;
+}
+/*기존 코드*/
+
+
+
+
+/*추가한 코드*/
+.main_grid .part {
+    flex-grow: 1; /* 각 파트가 균등하게 높이를 차지하게 함 */
+    display: grid;
+    grid-template-columns: 30% 70%; /* 왼쪽 30%, 오른쪽 70% */
+    border-bottom: 1px solid black; /* 각 파트마다 하단에 검정색 선 추가 */
+}
+
+.main_grid .part:last-child {
+    border-bottom: none; /* 마지막 파트에는 하단 선 제거 */
+}
+
+.change_password_button {
+    padding: 8px 16px;
+    background-color: #233C63;
+    border: none;
+    border-radius: 4px;
+    color: white;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.change_password_button:hover {
+    background-color: #1a2d4b;
+}
+
+.log_box {
+    width: 100%;
+    height: 150px; /* 높이는 필요에 따라 조절 */
+    border: 1px solid #cccccc;
+    padding: 8px;
+    overflow: auto;
+}

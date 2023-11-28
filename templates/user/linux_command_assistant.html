@@ -171,6 +171,8 @@
                     return true;
                 } else {
                     event.preventDefault();
+
+                    /* 정책 수정: 검사 위해 checkMessage()로 (원래 sendMessage) */
                     checkMessage();
                 }
             }
@@ -178,7 +180,8 @@
          
 
         $("#sendButton").on("click", function() {
-          checkMessage();
+            /* 정책 수정: 검사 위해 checkMessage()로 (원래 sendMessage) */
+            checkMessage();
         });
 
         /*  정책 수정: 입력값 <-> 정책 검사 함수 추가  */ 
@@ -197,26 +200,27 @@
             .then(data => {
                 if (data.violation) {
                     // 정책 위반 시 경고창을 띄움
-                    showToast('Policy Violation detected');
+                    showAlert('Policy Violation detected');
                 }
                 // GPT-3의 응답과 상관없이 sendMessage 호출
                 sendMessage();
             })
             .catch(error => {
                 console.error("Error: ", error);
-                showToast('Error occurred'); // 오류 발생 시 경고창
+                showAlert('Error occurred'); // 오류 발생 시 경고창
             });
         }
 
         
         
+        
+
+
         function sendMessage() {
             const message = $('#prompt-textarea').val().trim();
             if (!message) {
                 return;
             }
-
-            addMessage("user", message);
             const chatHistoryDiv = document.querySelector("[chat-history]");
             const messageDiv = document.createElement("div");
             messageDiv.style.display = "flex";

@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <head>
+        <!-- Required meta tags -->
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <!-- CSS import section start -->
+        <!-- main CSS -->
+        <link href="{{ url_for('static', filename='css/mypage.css') }}" rel="stylesheet" crossorigin="anonymous">
+        <!-- Bootstrap CSS -->
+        <link href="{{ url_for('static', filename='css/bootstrap/bootstrap.min.css') }}" rel="stylesheet" crossorigin="anonymous">
+        <!-- CSS import section end -->
+    </head>
+  <body>
+    <div class="sidebar">
+      {% include '/template/user_sidebar.html' %}
+    </div>
+    
+    <div class="main_grid">
+      <div class="top-content">
+        {% include '/template/header.html' %}
+      </div>
+
+      <!-- profile -->
+      <div class="part profile_section">
+        <div>
+          <div>ID <span id="user_id">{{ user_id }}</span></div>
+          <div>Name <span id="user_name">{{ user_name }}</span></div>
+          <div>Auth <span id="user_auth">{{ user_auth }}</span></div>
+        </div>
+      </div>
+    
+    
+
+      <!-- change pw -->
+      <div class="part change_pw_section">
+        <div>Change Password</div>
+        <div>
+            <button class="change_password_button">관리자에게 비밀번호 변경 요청</button>
+        </div>
+      </div>
+
+      <!-- log -->
+      <div class="part log_section">
+        <div>Log</div>
+        <div class="log_box">{{ log_text_from_db }}</div>
+      </div>
+
+      
+    </div>
+    {% include '/template/foot.html' %}
+
+    <!-- Javascript import section start -->
+        <!-- Bootstrap JS -->
+        <script src="{{ url_for('static', filename='js/bootstrap/bootstrap.bundle.min.js') }}" crossorigin="anonymous"></script>
+        <!-- Jquery JS -->
+        <script src="{{ url_for('static', filename='js/jquery/jquery-3.7.1.min.js') }}" crossorigin="anonymous"></script>
+        <!-- Javascript import section end -->
+
+        <!-- Javascript function section start -->
+        <script>
+          $(document).ready(function() {
+            $.ajax({
+              url: '/API/mypage',
+              type: 'POST',
+              contentType: 'application/json;charset=UTF-8',
+              success: function(response) {
+                console.log('Success:', response);
+                // 응답 데이터를 사용하여 화면에 정보를 표시
+                $('#user_id').text(response.user_id);
+                $('#user_name').text(response.user_name);
+                $('#user_auth').text(response.user_auth);
+              },
+              error: function(error) {
+                console.log('Error:', error);
+              }
+            });
+          });
+        </script>
+        
+
+</html>

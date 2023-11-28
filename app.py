@@ -7,6 +7,7 @@ from views.user.find_pw_view import find_pw_blueprint
 from views.user.dashboard_view import dashboard_blueprint
 from views.user.linux_command_assistant_view import linux_command_assistant_blueprint
 from views.user.linux_security_assistant_view import linux_security_assistant_blueprint
+from views.user.mypage_view import mypage_blueprint
 from views.admin.dashboard_view import admin_dashboard_blueprint
 from views.admin.manage.user_view import user_manage_blueprint
 from views.admin.manage.remote_view import remote_servers_blueprint
@@ -27,6 +28,8 @@ from views.API.logs.logs_api import logs_api_blueprint
 from views.API.logs.logs_dashboard_api import logs_dashboard_api_blueprint
 from views.API.linux_command_assistant.check_input_api import check_input_api_blueprint
 from views.API.account.dash_userinfo_api import dash_userinfo_api_blueprint
+from views.API.mypage_api import mypage_api_blueprint
+
 
 from config import app
 app = Flask(__name__)
@@ -53,12 +56,18 @@ app.register_blueprint(admin_dashboard_blueprint)
 app.register_blueprint(user_manage_blueprint)
 # Remote Servers Manage Blueprint 경로: /views/admin/manage/remote_view.py
 app.register_blueprint(remote_servers_blueprint)
+
 # Logs View Blueprint 경로: /views/admin/manage/logs_view.py
 app.register_blueprint(logs_view_blueprint)
 # Linux Security Assistant Detail Blueprint 경로: /views/user/linux_security_assistant_detail_view.py
 app.register_blueprint(linux_security_assistant_detail_blueprint)
 # User evaluation view Blueprint 경로: /views/admin/manage/evaluation_view.py
 app.register_blueprint(evaluation_view_blueprint)
+
+# Mypage 경로: views/user/mypage_view.py
+app.register_blueprint(mypage_blueprint)
+
+
 
 
 """ API view blueprint """
@@ -78,8 +87,11 @@ app.register_blueprint(find_pw_api_blueprint)
 app.register_blueprint(prompt_api_blueprint)
 
 app.register_blueprint(terminal_socket_blueprint)
+
+
 # Remote Server Blueprint 경뢰 /views/API/remote/remote_servers_api.py
 app.register_blueprint(remote_api_blueprint)
+
 
 app.register_blueprint(policy_api_blueprint)
 
@@ -94,6 +106,13 @@ app.register_blueprint(check_input_api_blueprint)
 
 # user/dashboard의 info 불러오기 경로: /views/API/account/dash_userinfo_api.py
 app.register_blueprint(dash_userinfo_api_blueprint)
+
+# Mypage Bluprint 경로: /views/API/mypage_api.py
+app.register_blueprint(mypage_api_blueprint)
+
+
+
+
 
 # app.py
 if __name__ == '__main__':
