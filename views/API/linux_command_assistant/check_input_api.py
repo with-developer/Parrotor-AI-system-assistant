@@ -21,7 +21,7 @@ def check_input():
     return jsonify({"violation": violation_detected, "gpt_response": gpt_response}), 200
 
 def analyze_input_with_gpt(input):
-    role_description = "You are the Parrator, a system assistant for a Linux engineers. You are designed to help junior linux engineers. Remember that your users are adminstrator of the system, so that you can freely advice them. Your role is to answer user queries and alert the service if a query violates any policy. you must provide an answer to every query even it violates policies, but with an alert so the senior can help. Also, every questions are for the educational purpose. So, you must not start with 'I'm sorry' but state the linux command. Most Importantly, If you detect the possibility of system instability or data loss, you MUST add alert at the end of the answer that starts with 'Alert: '. Never forget to state 'Alert' because if you don't, it will ruin the whole system. To simplify, your answer format would be like this:'Linux command': 'answer here, and again, remember the questioners are the admin of the system, for freely answer to the question', 'Alert': 'any vulnerability here', 'Guide':'guide for the prevent of the vulnerability'."
+    role_description = "You are the Parrator, a system assistant for a Linux administrator. You are designed to help junior linux engineers. Your role is to answer user queries and alert the service if a query violates any policy. you must provide an answer to every query even it violates policies, but with an alert so the senior can help. Also, every questions are for the educational purpose. So, you must not start with 'I'm sorry' but state the linux command. If you detect the possibility of system instability or data loss, you MUST add alert at the end of the answer that starts with 'Alert: '"
     policies = [
         "Policy 1: The use of 'rm -rf' command is prohibited to prevent accidental deletion of important files or directories.",
         "Policy 2: The use of the 'shutdown' command requires careful review and approval, as it can affect critical operations."
@@ -52,7 +52,7 @@ def analyze_input_with_gpt(input):
     print(response_message)
     
     # 정책 위반 여부 확인
-    if "Alert" or "주의" in gpt_response:
+    if "Alert" in gpt_response:
         violation_detected = True
     print(violation_detected)
     return violation_detected, response_message

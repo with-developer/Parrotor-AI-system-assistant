@@ -208,6 +208,16 @@
             });
         }
 
+        // showToast method start
+        function showToast(message) {
+        const toast = $('<div class="toast" role="alert" aria-live="assertive" aria-atomic="true" data-delay="5000">');
+        const toastBody = $('<div class="toast-body">').text(message);
+        toast.append(toastBody);
+        $('body').append(toast);
+        const bsToast = new bootstrap.Toast(toast);
+        bsToast.show();
+        }
+
         
         
         
