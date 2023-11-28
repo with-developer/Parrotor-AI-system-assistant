@@ -30,6 +30,8 @@
   <link rel="stylesheet" href="https://unpkg.com/xterm@4.11.0/css/xterm.css"/>
   </head>
   <body>
+    <div id="toast-container" style="position: fixed; top: 10px; right: 10px; z-index: 1050;"></div>
+
     
     <div class="sidebar">
       {% include '/template/user_sidebar.html' %}
@@ -197,7 +199,7 @@
             .then(data => {
                 if (data.violation) {
                     // 정책 위반 시 경고창을 띄움
-                    showToast('Policy Violation detected');
+                    showToast('Linux 보안 위협 경고: 관리자에게 문의하세요');
                 }
                 // GPT-3의 응답과 상관없이 sendMessage 호출
                 sendMessage();
@@ -210,13 +212,14 @@
 
         // showToast method start
         function showToast(message) {
-        const toast = $('<div class="toast" role="alert" aria-live="assertive" aria-atomic="true" data-delay="5000">');
-        const toastBody = $('<div class="toast-body">').text(message);
-        toast.append(toastBody);
-        $('body').append(toast);
-        const bsToast = new bootstrap.Toast(toast);
-        bsToast.show();
-        }
+    const toast = $('<div class="toast" role="alert" aria-live="assertive" aria-atomic="true" data-delay="5000" style="width: 400px; height: 50px; background-color: red; color: white;">');
+    const toastBody = $('<div class="toast-body">').text(message);
+    toast.append(toastBody);
+    $('#toast-container').append(toast);
+    const bsToast = new bootstrap.Toast(toast);
+    bsToast.show();
+}
+
 
         
         
@@ -324,13 +327,13 @@
 
     // showToast method start
     function showToast(message) {
-    const toast = $('<div class="toast" role="alert" aria-live="assertive" aria-atomic="true" data-delay="5000">');
+    const toast = $('<div class="toast" role="alert" aria-live="assertive" aria-atomic="true" data-delay="5000" style="width: 200px; height: 50px; background-color: red; color: white;">');
     const toastBody = $('<div class="toast-body">').text(message);
     toast.append(toastBody);
-    $('body').append(toast);
+    $('#toast-container').append(toast);
     const bsToast = new bootstrap.Toast(toast);
     bsToast.show();
-  }
+}
 
     
     addMessage("bot", "안녕하세요, 저는 당신의 리눅스 명령어 어시스턴트 Parrotor입니다. \n무엇을 도와드릴까요?");
