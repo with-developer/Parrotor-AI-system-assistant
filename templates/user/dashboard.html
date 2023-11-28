@@ -47,10 +47,14 @@
 
         <!-- #3 question_rank -->
         <div id="question_ranking" class="grid-item3">
+          
         </div>
 
         <!-- #4 question_graph -->
         <div id="question_graph" class="grid-item4">
+          <div>
+            <canvas id="log_chart" width="1250" height="300"></canvas>
+          </div>
           
         </div>
 
@@ -188,6 +192,52 @@
       const pageNumber = $(this).data("page");
       loadPage(pageNumber);
     });
+});
+
+/*** 4 그래프 ***/
+function fetchChartData() {
+        $.ajax({
+            url: '/API/logs_dashboard/chart',
+            type: 'GET',
+            success: function(response) {
+                if(response.status === "success") {
+                    var labels = response.message.map(log => log._id);
+                    var data = response.message.map(log => log.count);
+
+                    var ctx = document.getElementById('log_chart').getContext('2d');
+                    var logChart = new Chart(ctx, {
+                        type: 'line',
+                        data: {
+                            labels: labels,
+                            datasets: [{
+                                label: 'PARROTOR 사용량',
+                                data: data,
+                                backgroundColor: 'rgba(0, 123, 255, 0.5)',
+                                borderColor: 'rgba(0, 123, 255, 1)',
+                                borderWidth: 1
+                            }]
+                        },
+                        options: {
+                            responsive: false,
+                            scales: {
+                                y: {
+                                    beginAtZero: true
+                                }
+                            }
+                        }
+                    });
+                } else {
+                    console.error('Error fetching data:', response.message);
+                }
+            },
+            error: function(error) {
+                console.error('Error:', error);
+            }
+        });
+    }
+
+    $(document).ready(function() {
+    fetchChartData();
 });
 
 </script>

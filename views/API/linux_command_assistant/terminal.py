@@ -1,22 +1,44 @@
-from flask import Blueprint, g, jsonify
+from flask import Blueprint
 from config import app as global_app
 from socket_instance import socketio
 from ...API.account.account_verification_api import check_verification
 import paramiko
-import termios
-import struct
-import fcntl
-from bson.objectid import ObjectId
-from ..db_utils import mongodb_connect
+import os
 
-db = mongodb_connect()
 
 terminal_socket_blueprint = Blueprint('terminal_socket', __name__, url_prefix='/API/terminal')
 
-def set_winsize(fd, row, col, xpix=0, ypix=0):
-    print("setting window size with termios")
-    winsize = struct.pack("HHHH", row, col, xpix, ypix)
-    fcntl.ioctl(fd, termios.TIOCSWINSZ, winsize)
+
+
+try:
+    import termios
+    import fcntl
+    import struct
+
+    def set_winsize(fd, row, col, xpix=0, ypix=0):
+        print("setting window size with termios")
+        winsize = struct.pack("HHHH", row, col, xpix, ypix)
+        fcntl.ioctl(fd, termios.TIOCSWINSZ, winsize)
+
+except ImportError:
+    # For Windows
+    try:
+        import win32console
+        import win32con
+
+        def set_winsize(fd, row, col, xpix=0, ypix=0):
+            console = win32console.GetConsoleScreenBufferInfo().srWindow
+            console.Top = console.Left = 0
+            console.Bottom = row - 1
+            console.Right = col - 1
+            win32console.SetConsoleScreenBufferSize(console)
+
+    except ImportError:
+        print("Unable to import win32console. Please install pywin32.")
+
+        def set_winsize(fd, row, col, xpix=0, ypix=0):
+            print("set_winsize not implemented for this platform")
+
 
 
 def read_and_forward_ssh_output():
@@ -26,7 +48,6 @@ def read_and_forward_ssh_output():
         if "ssh_channel" in global_app.config and global_app.config["ssh_channel"]:
             if global_app.config["ssh_channel"].recv_ready():
                 output = global_app.config["ssh_channel"].recv(max_read_bytes).decode(errors="ignore")
-                
                 socketio.emit("pty-output", {"output": output}, namespace="/API/terminal/pty")
 
 @socketio.on("pty-input", namespace="/API/terminal/pty")
@@ -36,12 +57,12 @@ def pty_input(data):
         print("received input from browser: %s" % data["input"])
         global_app.config["ssh_channel"].send(data["input"])
 
-# @socketio.on("pty-init", namespace="/API/terminal/pty")
-# @check_verification(['user', 'admin'])
-# def pty_input(data):
-#     if global_app.config["ssh_channel"]:
-#         print("Init channel")
-#         global_app.config["ssh_channel"].send('\n')
+@socketio.on("pty-init", namespace="/API/terminal/pty")
+@check_verification(['user', 'admin'])
+def pty_input(data):
+    if global_app.config["ssh_channel"]:
+        print("Init channel")
+        global_app.config["ssh_channel"].send('\n')
 
 
 @socketio.on("resize", namespace="/API/terminal/pty")
@@ -52,34 +73,16 @@ def resize(data):
         set_winsize(global_app.config["fd"], data["rows"], data["cols"])
 
 
-@socketio.on("connect-server", namespace="/API/terminal/pty")
+@socketio.on("connect", namespace="/API/terminal/pty")
 @check_verification(['user', 'admin'])
-def connect(server_id):
+def connect():
     print("new client connected")
-    print("server_id:",server_id)
-    """TODO
-    1. DB에서 해당 server_id 권한 가져오기
-    2. 권한 확인하기
-    2.T. 권한 일치한다면 port, username, password 가져오기
-    2.T. 서버 연결
-    2.F. 권한 일치하지 않는다면 403 리턴
-    """
-    server_info = db.remote.find_one({'_id': ObjectId(server_id)})
-    print(server_info['access_role'])
-    if g.user_role in server_info['access_role']:
-        server_ip = server_info['server_ip']
-        server_port = server_info['server_port']
-        server_username = server_info['username']
-        server_password = server_info['password']
-    else:
-        return jsonify({"status":"fail", "message":"서버 권한이 일치하지 않습니다."}), 403
     if global_app.config["ssh_channel"]:
-        global_app.config["ssh_channel"].close()
-        global_app.config["ssh_client"].close()
+        return
 
     ssh_client = paramiko.SSHClient()
     ssh_client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-    ssh_client.connect(server_ip, port=int(server_port), username=server_username, password=server_password)
+    ssh_client.connect("127.0.0.1", port=5006, username="user2", password="1234")
 
     ssh_channel = ssh_client.invoke_shell(term="xterm-color")
 
@@ -92,13 +95,3 @@ def connect(server_id):
     print("SSH channel created")
     print("starting background task to continuously read and forward SSH output to client")
     print("task started")
-
-@socketio.on("disconnect", namespace="/API/terminal/pty")
-def handle_disconnect():
-    print("Client disconnected")
-    if "ssh_channel" in global_app.config and global_app.config["ssh_channel"]:
-        global_app.config["ssh_channel"].close()
-        print("SSH channel closed")
-    if "ssh_client" in global_app.config and global_app.config["ssh_client"]:
-        global_app.config["ssh_client"].close()
-        print("SSH client closed")

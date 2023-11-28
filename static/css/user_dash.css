@@ -8,7 +8,7 @@
 .bottom-content {
     display: grid;
     grid-template-columns: 30% 1fr; /* 2열 구조 */
-    grid-template-rows: 1fr 1fr; /* 2행 구조 */
+    grid-template-rows: 60% 1fr; /* 2행 구조 */
     gap: 1px; /* 그리드 아이템 사이의 간격 */
     background-color: black; /* 십자가 모양의 선을 위한 배경색 */
     padding: 1px; /* 내부 여백 */
@@ -21,7 +21,7 @@
 }
 .grid-item2 {
     box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1); /* 그림자 효과 */
-    padding: 1rem; /* 내부 여백 */
+    /*padding: 1rem; /* 내부 여백 */
     width: 100%; /* 너비 */
     height: 100%; /* 높이 */
     background-color: white; /* 배경색 */
