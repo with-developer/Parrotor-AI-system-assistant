@@ -24,6 +24,7 @@ def get_users_api():
             'user_name': user_info['user_name'],
             'user_id': user_info['user_id'],
             'role': user_info['role'],
+            'hashed_pw': user_info['user_pw'],
             'fail_count': user_info['fail_count'],
             'approved': user_info['approved'],
             'lastlogin' : user_info['lastlogin']

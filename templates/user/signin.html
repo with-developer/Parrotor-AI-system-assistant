@@ -7,81 +7,55 @@
 
         <!-- CSS import section start -->
         <!-- main CSS -->
-        <link href="{{ url_for('static', filename='css/main.css') }}" rel="stylesheet" crossorigin="anonymous">
+        <link href="{{ url_for('static', filename='css/signin.css') }}" rel="stylesheet" crossorigin="anonymous">
         <!-- Bootstrap CSS -->
         <link href="{{ url_for('static', filename='css/bootstrap/bootstrap.min.css') }}" rel="stylesheet" crossorigin="anonymous">
         <!-- CSS import section end -->
-
-        <title>Signin - Parrotor</title>
+        <style>
+            body {
+                background-image: url("{{ url_for('static', filename='images/login-page-bg.png') }}");
+                background-position: center;
+            }
+        </style>
     </head>
     
-    <body class="signin_up" style="display: unset;">
-        <nav class="navbar navbar-light bg-light" style="justify-content: center; background-color: #233C63 !important;">
-            <a class="navbar-brand" href="/">
-            <img src="{{ url_for('static', filename='images/logo.png') }}" width="30" height="30" class="d-inline-block align-top" alt="">
-            <span style="color:#fff;">Parrotor</span>
-            </a>
-        </nav>
-        <div class="form shadow-sm p-3 mb-5 bg-white rounded">
-            <h2 style="margin-bottom: 2rem;">로그인</h2>
-            <form id="signin_form" method="post">
-                <div class="form-group">
-                    <input type="text" class="form-control" id="user_id" placeholder="아이디를 입력하세요.">
+    <body class="signin_up" style="display: unset;">      
+            <img src="static/images/logo3.png" alt="logo3">
+            <div class="assistant-description">
+                사용자의 편의를 고려한, <br/>리눅스 및 보안 업무 어시스턴트<br/>
+            </div>            
+            <div class="parrotor-title">Parrotor</div>
+                    <!-- Form container -->
+                    <form id="signin_form" method="post">                        
+                        <div class="input-container">
+                            <div class="form-group">
+                                <label for="user_id" class="form-label">아이디</label>
+                                <input type="text" class="form-control" id="user_id" placeholder="userid">
+                            </div>
+                            <div class="form-group">
+                                <label for="user_pw" class="form-label">비밀번호</label>
+                                <input type="password" class="form-control" id="user_pw" aria-describedby="passwordHelp" placeholder="Password">
+                            </div>
+                        </div>
+                        <button type="submit" class="loginbtn loginbtn-primary loginbtn-lg loginbtn-block">로그인</button>
+                    </form>
+                    <div class="login_options">
+                        <button type="button" class="btn" onClick="location.href='/find_id'">아이디 찾기</button><span>|</span>
+                        <button type="button" class="btn" onClick="location.href='/find_pw'">비밀번호 찾기</button><span>|</span>
+                        <button type="button" class="btn" onClick="location.href='/signup'">회원가입</button>
+                    </div>
                 </div>
-                <div class="form-group">
-                    <input type="password" class="form-control" id="user_pw" placeholder="비밀번호를 입력하세요.">
-                </div>
-                <div class="form-group" style="text-align: left; margin-bottom: 1rem;">
-                    <input type="radio" name="chk_info" value="HTML"> 아이디 저장
-                </div>
-                <button type="submit" class="btn btn-primary btn-lg btn-block" style="width: 100%;">로그인</button>
-                
-            </form>
-            <div class="login_options">
-                <button type="button" class="btn btn-outline-dark" onClick="location.href='/find_id'">아이디 찾기</button><span>|</span>
-                <button type="button" class="btn btn-outline-dark" onClick="location.href='/find_pw'">비밀번호 찾기</button><span>|</span>
-                <button type="button" class="btn btn-outline-dark" onClick="location.href='/signup'">회원가입</button>
             </div>
         </div>
         
         
-
-        <footer class="bg-light text-center text-lg-start">
-            <!-- Grid container -->
-            <div class="container p-4">
-              <!--Grid row-->
-              <div class="row">
-                <!--Grid column-->
-                <div class="col-lg-6 col-md-12 mb-4 mb-md-0">
-                  <h5 class="text-uppercase">프로젝트의 설명이 들어갈 예정입니다.</h5>
-          
-                  <p>
-                    프로젝트의 설명이 들어갈 예정입니다.
-                  </p>
-                </div>
-                <!--Grid column-->
-          
-                <!--Grid column-->
-                <div class="col-lg-6 col-md-12 mb-4 mb-md-0">
-                  <h5 class="text-uppercase">프로젝트의 설명이 들어갈 예정입니다.</h5>
-          
-                  <p>
-                    프로젝트의 설명이 들어갈 예정입니다.
-                  </p>
-                </div>
-                <!--Grid column-->
-              </div>
-              <!--Grid row-->
-            </div>
-            <!-- Grid container -->
-          
             <!-- Copyright -->
-            <div class="text-center p-3" style="background-color: rgba(0, 0, 0, 0.2);">
+            <div class="text-center p-3">
               © 2023 Copyright:
               <a class="text-dark" href="#">Team Jirangobie</a>
             </div>
             <!-- Copyright -->
-          </footer>
+
 
 
         <!-- Javascript import section start -->
@@ -111,6 +85,7 @@
                         contentType: 'application/json;charset=UTF-8',
                         type: 'POST',
                         success: function(response) {
+                            console.log(response);
                             if(response.status === 'success') {
                                 // 로그인이 성공적으로 완료되면 서버에서 받은 토큰을 쿠키에 저장합니다.
                                 document.cookie = "access_token=" + response.token + ";path=/;samesite=strict";

@@ -5,23 +5,27 @@
     <title>Dashboard - Jirangobie</title>
     <style>
     .user-message {
-        text-align: right;
-        margin: 5px;
-        padding: 5px;
-        border-radius: 5px;
-        background-color: #e6f7ff;
-    }
-    .bot-message {
-        text-align: left;
-        margin: 5px;
-        padding: 5px;
-        border-radius: 5px;
-        background-color: #f2f2f2;
-        width: 80%;
-    }
+          text-align: right;
+          margin: 5px;
+          padding: 5px;
+          border-radius: 5px;
+          background-color: #FBFAEC;
+          font-size: 1rem;
+      }
+      .bot-message {
+          text-align: left;
+          margin: 5px;
+          padding: 5px;
+          border-radius: 5px;
+          background-color: #233C64;
+          color:white;
+          font-size: 1rem;
+      }
     .append_box {
       border-style: double;
       padding: 1rem;
+      background: #FBFAEC;
+      color: black;
     }
     </style>
   </head>
@@ -36,7 +40,7 @@
         {% include '/template/header.html' %}
       </div>
       <div class="bottom-content">
-        <div class="shadow-sm p-3 mb-5 bg-body rounded" style="margin: 1rem 2rem 0 2rem; ">
+        <div class="shadow-sm p-3 mb-5 bg-body rounded" style="margin: 1rem 2rem 0 2rem; border-radius: 2rem!important; box-shadow: 0 1rem 3rem rgba(0,0,0,.3)!important;">
           <div chat-history style="height: 83vh; overflow: scroll; font-size: 14px;"></div>
         </div>
       </div>
@@ -49,14 +53,15 @@
       const messageDiv = document.createElement("div");
       messageDiv.style.display = "flex";
       messageDiv.style.flexWrap = 'wrap';
-      messageDiv.style.borderRadius = "5px"
+      messageDiv.style.borderRadius = "1rem"
 
 
 
       if (type === "user") {
-        messageDiv.style.backgroundColor = "#e6f7ff";
+        messageDiv.style.backgroundColor = "#FBFAEC";
         messageDiv.style.justifyContent = "right";
-        messageDiv.style.margin = "0 0 5px 0";
+        messageDiv.style.margin = "0 0 10px 0";
+        messageDiv.style.boxShadow =  "0 .225rem .25rem rgba(0,0,0,.175)";
         const userIcon = document.createElement("img");
         userIcon.src = "{{ url_for('static', filename='images/icons/icons8-user-60.png') }}"; // 봇 아이콘 이미지 파일 경로
         userIcon.alt = "User Icon";
@@ -72,10 +77,11 @@
         messageDiv.appendChild(userIcon);
         
       } else if (type === "bot") {
-        messageDiv.style.backgroundColor = "#f2f2f2";
-        messageDiv.style.margin = "0 0 5px 0";
+        messageDiv.style.backgroundColor = "#233C64";
+        messageDiv.style.margin = "0 0 10px 0";
+        messageDiv.style.boxShadow =  "0 .225rem .25rem rgba(0,0,0,.175)";
         const botIcon = document.createElement("img");
-        botIcon.src = "{{ url_for('static', filename='images/logo3.png') }}"; // 봇 아이콘 이미지 파일 경로
+        botIcon.src = "{{ url_for('static', filename='images/logo.png') }}"; // 봇 아이콘 이미지 파일 경로
         botIcon.alt = "Bot Icon";
         botIcon.className = "message-icon";
         botIcon.width = "32";
@@ -103,7 +109,7 @@
 
                     response.message.forEach((item, index) => {
                       const button = document.createElement("button");
-                      button.className = "append_box";
+                      button.className = "append_box btn btn-outline-secondary";
                       button.innerText = item;
                       button.id = "button_" + index; // 고유 ID 할당
                       button.style.margin = "5px";
@@ -142,7 +148,7 @@
 
                 response.message.forEach((item, index) => {
                   const button = document.createElement("button");
-                  button.className = "append_box";
+                  button.className = "append_box btn btn-outline-secondary";
                   button.innerText = item;
                   button.id = "button_" + index; // 고유 ID 할당
                   button.style.margin = "5px";
@@ -184,7 +190,7 @@
 
                   
                   const button = document.createElement("button");
-                  button.className = "append_box";
+                  button.className = "append_box btn btn-outline-secondary";
                   button.innerText = response.servers[k]['server_name'];
                   button.id = "button_" + k; // 고유 ID 할당
                   button.style.margin = "5px";

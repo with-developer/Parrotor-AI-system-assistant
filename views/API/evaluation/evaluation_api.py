@@ -53,24 +53,5 @@ def evaluation():
 
     print()
     print(top_commands_and_questions_by_user)
-    # filtered_logs = {}
-    # for key, value in logs.items():
-    #     print("key:",key)
-    #     print("value:",value)
-    #     print()
-
-        
-    #     filtered_logs[str(key)] = {
-    #         'log_type' : value['log_type'],
-    #         'user_id' : value['user_id'],
-    #         'question' : value['question'],
-    #         'answer' : value['answer'],
-    #         'time' : value['time']
-    #     }
-
-    # print("logs:",filtered_logs)
-
-
-        
-    # return jsonify({"status" : "success", "message" : filtered_logs}), 200
+    
     return jsonify({"status" : "success", "message": "로그 정보 조회 성공", "data": top_commands_and_questions_by_user, "total_pages": total_pages, "total_users": total_data}), 201

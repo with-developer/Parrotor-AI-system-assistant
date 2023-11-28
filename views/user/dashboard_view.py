@@ -9,4 +9,4 @@ dashboard_blueprint = Blueprint('dashboard', __name__, url_prefix='/dashboard')
 @check_verification(['user', 'admin'])
 def signin():
     is_admin = True if g.user_role == "admin" else False
-    return render_template('user/dashboard.html', page_title="사용자/대시보드", is_admin=is_admin)
+    return render_template('user/dashboard.html', page_title="대시보드", is_admin=is_admin)

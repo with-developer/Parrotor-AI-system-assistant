@@ -214,6 +214,10 @@ def signup_api():
             "rmuser": 0,
             "ftp": 0,
             "telnet": 0
+        },
+        "security_level": {
+            "correct": 0,
+            "incorrect": 0
         }
     }
     db.account.insert_one(insert_data)

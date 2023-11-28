@@ -37,4 +37,4 @@ def linux_security_assistant_detail():
     print("policy_classification:", policy_classification)
     print("policy_detail:", policy_detail)
 
-    return render_template('user/linux_security_assistant_detail.html', page_title="사용자/리눅스 보안 어시스턴트", is_admin=is_admin, policy_classification=policy_classification,policy_name=policy_param, policy_detail=policy_detail)
+    return render_template('user/linux_security_assistant_detail.html', page_title="리눅스 보안 어시스턴트", is_admin=is_admin, policy_classification=policy_classification,policy_name=policy_param, policy_detail=policy_detail)

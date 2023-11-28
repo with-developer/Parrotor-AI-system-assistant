@@ -1,0 +1,124 @@
+@font-face {
+    font-family: 'NanumGithicCoding';
+    src: url('/static/fonts/NanumGothicCoding-Bold.ttf') format('truetype'),
+        url('/static/fonts/NanumGothicCoding.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+body, html {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #f0f0f0;
+    font-family: 'NanumGithicCoding', sans-serif;
+}
+
+.signin_up {
+    text-align: center;
+    width: 100%!important;
+}
+img[src="static/images/logo3.png"] {
+    margin-top: 60px;
+    width:50px;
+}
+
+.assistant-description, .parrotor-title {
+    text-align: center;
+    color: #233C64;
+    margin-bottom: 1rem;
+}
+
+.assistant-description {
+    font-size: 30px;
+    font-family: 'Noto Sans KR', sans-serif;
+    font-weight: 700;
+}
+
+.parrotor-title {
+    margin-top: -50px;
+    font-size: 140px;
+    font-family: 'Noto Sans KR', sans-serif;
+    font-weight: 700;
+}
+
+#signin_form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.input-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+}
+.form-group {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start; /* 자식 요소를 왼쪽으로 정렬 */
+    width: 100%;
+    max-width: 460px; /* 부모 컨테이너의 최대 너비 설정 */
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.form-group label {
+    margin-bottom: 0.2rem;
+    margin-top: 0.1rem;
+    color: #233C64;
+    font-size: 15px;
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 700;
+}
+
+.form-group .form-control {
+    width: 100%; /* 입력 필드의 너비를 부모 컨테이너에 맞춤 */
+    height: 53px;
+    border-radius: 50px;
+    border: none;
+    background: #FBFAEC;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px;
+    color: #8D8BA7;
+    padding-left: 20px; /* 내부 여백 설정 */
+}
+
+/* 로그인 버튼 스타일 */
+.loginbtn-primary {
+    margin-top: 50px;
+    width: 139px; 
+    height: 46px;
+    background-color: #233C63;
+    border-color: #233C63;
+    border-radius: 40px;
+    color: white;
+    font-size: 1rem;
+    font-family: 'DM Sans', sans-serif;
+    margin-bottom: 80px;
+}
+
+.loginbtn-primary:hover {
+    background-color: #1a2d4b;
+    border-color: #1a2d4b;
+    
+}
+
+/* 기존의 .btn-outline-dark 스타일 */
+.btn-outline-dark {
+    margin-top: 1rem;
+    width: 150px;
+    border-radius: 40px;
+    font-size: 1rem;
+    color: #233C63;
+    background-color: transparent;
+    border: none; /* 테두리 제거 */
+}
+
+.login_options {
+    display: block;
+}

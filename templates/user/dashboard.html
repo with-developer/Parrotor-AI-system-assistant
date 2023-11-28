@@ -3,6 +3,14 @@
   <head>
     {% include '/template/head.html' %}
     <title>Dashboard - Jirangobie</title>
+    <style>
+      table>:not(caption)>*>* {
+        padding: 0rem 0rem !important;
+      }
+      .mb-3 {
+          margin-bottom: 1.2rem!important;
+      }
+    </style>
   </head>
   <body>
     
@@ -15,12 +23,195 @@
         {% include '/template/header.html' %}
       </div>
       <div class="bottom-content">
-        <div class="shadow-sm p-3 mb-5 bg-body rounded" style="margin: 1rem 2rem 0 2rem; ">
-          Dashboard
-        </div>
+        <div class="shadow p-3 mb-5 bg-body rounded" style="margin: 1rem 2rem 0 2rem;">
+          
+          <div style="height: 330px; display: flex;">
+            <div class="left-div">
+              <div id="user_info" class="grid-item1">
+                <div class="shadow p-2 mb-3 rounded" style="background-color: #f0f0f0; width: 150px; height: 110px; text-align: center;">아이디<div style="top: 0px;position: relative; text-align: center;"><span style="font-size: 2rem;"><span id="user_id">{{ user_id }}</span></span></div></div>
+                <div class="shadow p-2 mb-3 rounded" style="background-color: #f0f0f0; width: 150px; height: 110px; text-align: center;">이름<div style="top: 0px;position: relative; text-align: center;"><span style="font-size: 2rem;"><span id="user_name">{{ user_name }}</span></span></div></div>
+                <div class="shadow p-2 mb-3 rounded" style="background-color: #f0f0f0; width: 150px; height: 110px; text-align: center;">권한<div style="top: 0px;position: relative; text-align: center;"><span style="font-size: 2rem;"><span id="user_auth">{{ user_auth }}</span></span></div></div>
+              </div>
+              <div id="question_ranking" class="grid-item3">
+                <div class="shadow p-2 mb-3 rounded" style="background-color: #f0f0f0; width: 150px; height: 110px; text-align: center;">사용자 수준<div style="top: 0px;position: relative; text-align: center;"><span style="font-size: 2rem;"><span id="user_evaluation">{{ user_evalution }}</span></span></div></div>
+                <div class="shadow p-2 mb-3 rounded" style="background-color: #f0f0f0; width: 150px; height: 110px; text-align: center;">총 질문 횟수<div style="top: 0px;position: relative; text-align: center;"><span style="font-size: 2rem;"><span id="question_count"></span></span></div></div>
+              </div>
+            </div>
+              <div class="shadow p rounded" style="width: 84%; height: 300px; margin-left:3rem;">
+                <table class="table caption-top table-white" style="margin-top:1rem;">
+                  <caption>최근 질문 5개</caption>
+                  <thead>
+                      <tr style="font-size: 15px;">
+                          <th scope="col">#</th>
+                          <th style="max-width:120px; width: 120px; min-width: 120px; text-align: center;">사용자</th>
+                          <th>대화내역</th>
+                          <th style="max-width:150px; width: 150px; min-width: 150px; text-align: center">날짜</th>
+                      </tr>
+                  </thead>
+                  <tbody id="usersTable" class="table-group-divider" style="font-size: small; padding: 0 !important;">
+                      
+                  </tbody>
+              </table>
+              </div>
+
+              
+            </div>
+            <div id="question_graph" class="grid-item4 shadow p rounded" style="margin-left:12.5rem;">
+              <div>
+                <canvas id="log_chart" width="800%" height="300" ></canvas>
+              </div>
+              
+            </div>
+    
+        
       </div>
       
     </div>
     {% include '/template/foot.html' %}
   </body>
+  <script>
+    // #1 user_info
+    $(document).ready(function() {
+            $.ajax({
+              url: '/API/account/dash_userinfo',
+              type: 'POST',
+              contentType: 'application/json;charset=UTF-8',
+              success: function(response) {
+                console.log('Success:', response);
+                // 응답 데이터를 사용하여 화면에 정보를 표시
+                $('#user_id').text(response.user_id);
+                $('#user_name').text(response.user_name);
+                $('#user_auth').text(response.user_auth);
+                const test = response.user_evaluation + "/100점"
+                $('#user_evaluation').text(test);
+                const var2 = response.question_count + "회"
+                $('#question_count').text(var2)
+              },
+              error: function(error) {
+                console.log('Error:', error);
+              }
+            });
+      });
+
+
+
+    
+
+
+      $(document).ready(function() {
+      var items_per_page = 3;
+      var max_length = 45; // 내용의 최대 표시 길이
+
+      function createMoreButton(content, containerId) {
+        return '<span id="' + containerId + '-preview">' + content.substring(0, max_length) + '...</span>' +
+              '<span id="' + containerId + '-full" style="display: none;">' + content + '</span>';
+      }
+
+
+      window.toggleContent = function(containerId) {
+        var isFullContentVisible = $('#' + containerId + '-full').is(':visible');
+
+        if (!isFullContentVisible) {
+            $('#' + containerId + '-preview').hide();
+            $('#' + containerId + '-full').show();
+            $('#' + containerId + '-toggle').html('<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" class="bi bi-arrow-up-square-fill" viewBox="0 0 16 16" style="margin-top:.3rem;"><path d="M2 16a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2zm6.5-11.5v5.793l-2.146 2.147a.5.5 0 0 1-.708-.708l3-3a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1-.708.708L8.5 10.293V4.5a.5.5 0 0 1 1 0z"/></svg>숨기기');
+        } else {
+            $('#' + containerId + '-preview').show();
+            $('#' + containerId + '-full').hide();
+            $('#' + containerId + '-toggle').html('<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" class="bi bi-arrow-down-square-fill" viewBox="0 0 16 16" style="margin-top:.3rem;"><path d="M2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2zm6.5 4.5v5.793l2.146-2.147a.5.5 0 0 1 .708.708l-3 3a.5.5 0 0 1-.708 0l-3-3a.5.5 0 1 1 .708-.708L7.5 10.293V4.5a.5.5 0 0 1 1 0"/></svg>더보기');
+        }
+      };
+
+
+      function loadPage(pageNumber) {
+        $.post("/API/logs_dashboard/get", { page: pageNumber }, function(data) {
+            var tableContent = "";
+            var index = 1 + (pageNumber - 1) * 10;
+            var logKeys = Object.keys(data.logs).reverse(); // 로그 키 배열을 역순으로
+
+            logKeys.forEach(function(userId) {
+                var user = data.logs[userId];
+                var questionId = 'question-' + index;
+                var answerId = 'answer-' + index;
+
+                tableContent += "<tr>";
+                tableContent += "<td rowspan='2' style='vertical-align: middle; text-align: center;'>" + index + "</td>";
+                tableContent += "<td rowspan='2' style='vertical-align: middle; text-align: center'>" + user.user_id + "</td>";
+                tableContent += "<td>" + (user.question.length > max_length ? createMoreButton(user.question, questionId) : user.question) + "</td>";
+                tableContent += "<td rowspan='2' style='vertical-align: middle; text-align: center'>" + user.time + "</td>";
+                tableContent += "</tr>";
+                tableContent += "<tr style='border-bottom:groove;'>";
+                tableContent += "<td>" + (user.answer.length > max_length ? createMoreButton(user.answer, answerId) : user.answer) + "</td>";
+                tableContent += "</tr>";
+                index++;
+            });
+
+            var startEntry = (pageNumber - 1) * items_per_page + 1;
+            var endEntry = Math.min(pageNumber * items_per_page, data.total_users);
+            $("#startEntry").text(startEntry);
+            $("#endEntry").text(endEntry);
+            $("#totalEntries").text(data.total_users);
+            $("#usersTable").html(tableContent);
+
+        }).fail(function() {
+            console.error("요청에 실패했습니다.");
+        });
+    }
+    loadPage(1); // 초기 페이지 로딩
+
+    // 페이지네비게이션 버튼 클릭 이벤트
+    $(document).on("click", ".page-number, .prev, .next", function(e) {
+      e.preventDefault();
+      const pageNumber = $(this).data("page");
+      loadPage(pageNumber);
+    });
+});
+
+/*** 4 그래프 ***/
+function fetchChartData() {
+        $.ajax({
+            url: '/API/logs_dashboard/chart',
+            type: 'GET',
+            success: function(response) {
+                if(response.status === "success") {
+                    var labels = response.message.map(log => log._id);
+                    var data = response.message.map(log => log.count);
+
+                    var ctx = document.getElementById('log_chart').getContext('2d');
+                    var logChart = new Chart(ctx, {
+                        type: 'line',
+                        data: {
+                            labels: labels,
+                            datasets: [{
+                                label: 'PARROTOR 사용량',
+                                data: data,
+                                backgroundColor: 'rgba(0, 123, 255, 0.5)',
+                                borderColor: 'rgba(0, 123, 255, 1)',
+                                borderWidth: 1
+                            }]
+                        },
+                        options: {
+                            responsive: false,
+                            scales: {
+                                y: {
+                                    beginAtZero: true
+                                }
+                            }
+                        }
+                    });
+                } else {
+                    console.error('Error fetching data:', response.message);
+                }
+            },
+            error: function(error) {
+                console.error('Error:', error);
+            }
+        });
+    }
+
+    $(document).ready(function() {
+    fetchChartData();
+});
+
+</script>
 </html>
