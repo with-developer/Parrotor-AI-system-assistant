@@ -1,12 +1,13 @@
 import os
 import openai
 import datetime
-import time
+import time, re
 from bson.objectid import ObjectId
 from flask import Blueprint, render_template, request, Response, jsonify, stream_with_context, g
 from ..db_utils import mongodb_connect
 from ...API.account.account_verification_api import check_verification
 from dotenv import load_dotenv
+from collections import Counter
 
 load_dotenv(verbose=True)
 openai_api_key = os.getenv('openai_api_key')
@@ -92,6 +93,27 @@ Instructions:
                 "time" : (datetime.datetime.utcnow() + datetime.timedelta(hours=9)).strftime('%Y-%m-%d %H:%M:%S')
             }
         )
+        combined_string = message + total_answer
+
+        # Step 2: Get all keys from db.commands
+        command_keys = db.commands.find_one()  # Assuming this returns a dictionary-like object
+
+        # Removing non-command keys from command_keys, if necessary
+        # for example: command_keys.pop('_id', None)
+
+        # Step 3: Count the occurrences of each key in the combined string
+        key_counts = Counter()
+        for key in command_keys:
+            key_counts[key] = len(re.findall(re.escape(key), combined_string))
+
+        # Step 4: Update db.commands with the new counts
+        for key, count in key_counts.items():
+            if count > 0:
+                # Increment the count of each command in the database
+                db.commands.update_one({'_id': command_keys['_id']}, {'$inc': {key: count}})
+
+        command_level_updates = {f"command_level.{key}": count for key, count in key_counts.items()}
+        db.account.update_one({"user_id": g.user_id}, {"$inc": command_level_updates})
         
 
     
@@ -193,6 +215,24 @@ Instructions:
                 "time" : (datetime.datetime.utcnow() + datetime.timedelta(hours=9)).strftime('%Y-%m-%d %H:%M:%S')
             }
         )
+        combined_string = message + total_answer
+
+        # Step 2: Get all keys from db.commands
+        command_keys = db.commands.find_one()  # Assuming this returns a dictionary-like object
+
+        # Removing non-command keys from command_keys, if necessary
+        # for example: command_keys.pop('_id', None)
+
+        # Step 3: Count the occurrences of each key in the combined string
+        key_counts = Counter()
+        for key in command_keys:
+            key_counts[key] = len(re.findall(re.escape(key), combined_string))
+
+        # Step 4: Update db.commands with the new counts
+        for key, count in key_counts.items():
+            if count > 0:
+                # Increment the count of each command in the database
+                db.commands.update_one({'_id': command_keys['_id']}, {'$inc': {key: count}})
         
 
     

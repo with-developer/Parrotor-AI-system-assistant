@@ -36,7 +36,7 @@
         {% include '/template/header.html' %}
       </div>
       <div class="bottom-content">
-        <div class="shadow-sm p-3 mb-5 bg-body rounded" style="margin: 1rem 1rem 0 2rem !important; height: 86vh; width: 90vw;">
+        <div class="shadow-sm p-3 mb-5 bg-body rounded" style="margin: 1rem 2rem 0 2rem; ">
           <div chat-history style="height: 83vh; overflow: scroll; font-size: 14px;"></div>
         </div>
       </div>
@@ -108,7 +108,6 @@
                       button.id = "button_" + index; // 고유 ID 할당
                       button.style.margin = "5px";
                       button.onclick = function() {
-                        console.log("Clicked on item: " + item);
                         addMessage("user", `${item}`,"None")
                         addMessage("bot", `${item}을 선택하셨네요. \n어떤 세부 항목을 진단해볼까요?`, "second",item);
                       };
@@ -118,7 +117,7 @@
                   messageDiv.appendChild(out);
                 }
                 else{
-                  console.log("Error")
+                  a = 'a';
                 }
             },
             error: function(xhr, status, error) {
@@ -135,7 +134,7 @@
             success: function(response) {
               if (response.status === "success") {
                 // 응답 처리 로직
-                console.log("Response received:", response.message);
+                
                 const out = document.createElement("div");
                 out.style.display = "flex";
                 out.style.flexWrap = "wrap";
@@ -148,7 +147,7 @@
                   button.id = "button_" + index; // 고유 ID 할당
                   button.style.margin = "5px";
                   button.onclick = function() {
-                    console.log("Clicked on item: " + item);
+                    
                     addMessage("user", `${item}`,"None")
                     addMessage("bot", `${item}을 선택하셨네요. \n어떤 서버에서 진단을 해볼까요?`, "third",item);
                     //window.location.href = '/linux_security_assistant/detail/?policy=' + encodeURIComponent(item);
@@ -174,14 +173,14 @@
             success: function(response) {
               if (response.status === "success") {
                 // 응답 처리 로직
-                console.log("Response received:", response.servers);
+                
                 const out = document.createElement("div");
                 out.style.display = "flex";
                 out.style.flexWrap = "wrap";
                 out.style.marginLeft = "35px";
 
                   Object.keys(response.servers).forEach(function(k){
-                      console.log('키값 : '+k + ', 데이터값 : ' + response.servers[k]['server_name']);
+                      
 
                   
                   const button = document.createElement("button");
@@ -190,7 +189,7 @@
                   button.id = "button_" + k; // 고유 ID 할당
                   button.style.margin = "5px";
                   button.onclick = function() {
-                    console.log("Clicked on item: " + response.servers[k]['server_name']);
+                    
                     window.location.href = '/linux_security_assistant/detail/?policy=' + encodeURIComponent(item) + `&key=`+k+`&servername=`+response.servers[k]['server_name'];
                   };
                   out.appendChild(button);

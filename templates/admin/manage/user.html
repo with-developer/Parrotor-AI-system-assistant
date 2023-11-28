@@ -79,7 +79,6 @@
             var items_per_page = 10;
             function loadPage(pageNumber) {
                 $.post("/API/account/get-users", { page: pageNumber }, function(data) {
-                    console.log(data);
 
                     var tableContent = "";
                     var index = 1 + (pageNumber - 1) * 10;
