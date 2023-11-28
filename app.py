@@ -24,6 +24,7 @@ from views.API.remote.remote_servers_api import remote_api_blueprint
 from views.API.linux_security_assistant.policy import policy_api_blueprint
 from views.API.linux_security_assistant.save_result import save_result_api_blueprint
 from views.API.logs.logs_api import logs_api_blueprint
+from views.API.evaluation.evaluation_api import evaluation_api_blueprint
 from config import app
 app = Flask(__name__)
 socketio.init_app(app)
@@ -83,6 +84,7 @@ app.register_blueprint(save_result_api_blueprint)
 
 app.register_blueprint(logs_api_blueprint)
 
+app.register_blueprint(evaluation_api_blueprint)
 
 # app.py
 if __name__ == '__main__':
