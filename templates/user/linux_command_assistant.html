@@ -200,14 +200,14 @@
             .then(data => {
                 if (data.violation) {
                     // 정책 위반 시 경고창을 띄움
-                    showAlert('Policy Violation detected');
+                    showToast('Policy Violation detected');
                 }
                 // GPT-3의 응답과 상관없이 sendMessage 호출
                 sendMessage();
             })
             .catch(error => {
                 console.error("Error: ", error);
-                showAlert('Error occurred'); // 오류 발생 시 경고창
+                showToast('Error occurred'); // 오류 발생 시 경고창
             });
         }
 
