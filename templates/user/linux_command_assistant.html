@@ -99,9 +99,6 @@
       messageDiv.style.borderRadius = "1rem"
       
       
-
-
-
       if (type === "user") {
         messageDiv.style.backgroundColor = "#FBFAEC";
         messageDiv.style.justifyContent = "right";
@@ -221,6 +218,7 @@
             if (!message) {
                 return;
             }
+            addMessage("user", message);
             const chatHistoryDiv = document.querySelector("[chat-history]");
             const messageDiv = document.createElement("div");
             messageDiv.style.display = "flex";
