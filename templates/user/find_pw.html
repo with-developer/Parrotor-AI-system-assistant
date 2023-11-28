@@ -12,65 +12,35 @@
         <link href="{{ url_for('static', filename='css/bootstrap/bootstrap.min.css') }}" rel="stylesheet" crossorigin="anonymous">
         <!-- CSS import section end -->
 
-        <title>Find pw - Parrotor</title>
     </head>
     
     <body class="signin_up" style="display: unset;">
-        <nav class="navbar navbar-light bg-light" style="justify-content: center; background-color: #233C63 !important;">
-            <a class="navbar-brand" href="/">
-            <img src="{{ url_for('static', filename='images/logo.png') }}" width="30" height="30" class="d-inline-block align-top" alt="">
-            <span style="color:#fff;">Parrotor</span>
-            </a>
-        </nav>
-        <!-- find_pw 수정한 부분 -->
-        <div class="form shadow-sm p-3 mb-5 bg-white rounded">
-            <h2 style="margin-bottom: 2rem;">Forgot PW?</h2>
-            <p>Forgotten your PW? Enter your ID and email address below, and we'll email your PW.</p>
+        <img src="{{ url_for('static', filename='images/logo3.png') }}" alt="logo">
+        <div class="forgotid_pw">
+            Forgot PW?
+        </div>
+        <div class="forgotid_pw2">
+            Forgotten your ID? Enter your name below, and we'll let you know your ID.
+        </div>
             <form id="signin_form" method="post">
                 <div class="form-group">
-                    <input type="text" class="form-control" id="user_id" placeholder="Enter your ID.">
+                    <input type="text" class="form-control" id="user_id" placeholder="Enter your ID." style="margin-bottom: 1.3rem;">
+
                     <input type="text" class="form-control" id="user_name" placeholder="Enter your name">
                 </div>
                 <div class="button-container">
-                    <button type="button" class="btn btn-cancel btn-lg" style="width: 48%;">Cancel</button>
-                    <button type="submit" class="btn btn-primary btn-lg" style="width: 48%;">Submit</button>
+                    <button type="button" class="btn btn-cancel btn-lg">Cancel</button>
+                    <button type="submit" class="btn btn-primary btn-lg">Submit</button>
                 </div>                               
             </form>
-        </div>
+
         <!-- find_pw 수정한 부분 -->
         
 
-        <footer class="bg-light text-center text-lg-start">
-            <!-- Grid container -->
-            <div class="container p-4">
-              <!--Grid row-->
-              <div class="row">
-                <!--Grid column-->
-                <div class="col-lg-6 col-md-12 mb-4 mb-md-0">
-                  <h5 class="text-uppercase">프로젝트의 설명이 들어갈 예정입니다.</h5>
-          
-                  <p>
-                    프로젝트의 설명이 들어갈 예정입니다.
-                  </p>
-                </div>
-                <!--Grid column-->
-          
-                <!--Grid column-->
-                <div class="col-lg-6 col-md-12 mb-4 mb-md-0">
-                  <h5 class="text-uppercase">프로젝트의 설명이 들어갈 예정입니다.</h5>
-          
-                  <p>
-                    프로젝트의 설명이 들어갈 예정입니다.
-                  </p>
-                </div>
-                <!--Grid column-->
-              </div>
-              <!--Grid row-->
-            </div>
-            <!-- Grid container -->
+       
           
             <!-- Copyright -->
-            <div class="text-center p-3" style="background-color: rgba(0, 0, 0, 0.2);">
+            <div class="text-center p-3">
               © 2023 Copyright:
               <a class="text-dark" href="#">Team Jirangobie</a>
             </div>

@@ -1,121 +1,113 @@
-@font-face {
-    font-family: 'NanumGithicCoding';
-    src: url('/static/fonts/NanumGothicCoding-Bold.ttf') format('truetype'),
-        url('/static/fonts/NanumGothicCoding.ttf') format('truetype');
-    font-weight: normal;
-    font-style: normal;
-}
-
 body {
     font-family: 'NanumGithicCoding', sans-serif !important;
     overflow: auto;
 }
+
 body, html {
     margin: 0;
-    display: flex;
+    padding: 0;
     height: 100%;
     width: 100%;
-    background-color: #f0f0f0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #ffffff;
 }
-.main_grid {
-    flex-grow: 1;  /* 남은 공간을 모두 차지 */
+
+img[alt="logo"] {
+    margin-top: 8rem!important;
+    display: block;
+    margin: 60px auto;
+    width: 50px; 
+    margin-bottom: -1rem;
+}
+
+.forgotid_pw {
+    text-align: center;
+    color: #233C64;
+    font-size: 60px;
+    font-family: 'Noto Sans KR', sans-serif;
+    font-weight: 700;
+    margin-bottom: 1rem;
+}
+
+.forgotid_pw2 {
+    text-align: center;
+    color: #233C64;
+    font-size: 20px; /* font-size 수정 */
+    font-family: 'Noto Sans KR', sans-serif;
+    font-weight: 700;
+    margin-bottom: 7rem;
+}
+
+.input-container {
     display: flex;
     flex-direction: column;
-}
-.top-content {
-    background-color: #f0f0f0;
-    height: auto;
+    align-items: center;
+    width: 100%;
 }
 
-.bottom-content {
-    background-color: #f0f0f0;
-    flex-grow: 1;  /* 남은 공간을 모두 차지 */
-}
-
-.signin_up {
-    text-align: center;
-    background-color: #f0f0f0;
-}
-
-.signin_up .form {
-    width: 50vw;
-    display: inline-block;
-    margin: 3rem 2rem 3rem 2rem;
-    padding: 2rem;
-    background-color: #fff;
-}
-
-.signin_up .form .form-control {
-    margin: 1.5rem 0rem 1rem 0rem;
-}
-
-/* main.css에서 수정: cancel버튼 추가 및 버튼 정렬 */
-.btn-container {
+.form-group {
     display: flex;
-    justify-content: space-between; 
+    flex-direction: column;
+    align-items: flex-start;
+    width: 100%;
+    max-width: 460px;
+    margin-left: auto;
+    margin-right: auto;
 }
 
+.form-group .form-control {
+    width: 100%;
+    height: 53px;
+    border-radius: 50px;
+    border: none;
+    background: #FBFAEC;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px;
+    color: #8D8BA7;
+    padding-left: 20px;
+    margin-bottom: 40px;
+}
+
+.button-container {
+    margin-top: -0.5rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px; /* Adjust the gap between buttons */
+}
+
+
+.signin_up .btn-cancel, .signin_up .btn-primary {
+    width: 139px; 
+    height: 46px;
+    padding: 0.5rem 1rem;
+    margin-top: 1rem;
+}
+
+/* Styles specific to the .btn-cancel */
 .signin_up .btn-cancel {
-    background-color: #ccc; 
-    border-color: #aaa; 
-    padding: 0.5rem 1rem; 
+    background-color: #ccc;
+    border-color: #aaa;
 }
 
 .signin_up .btn-cancel:hover {
-    background-color: #bbb; 
-    border-color: #999; 
+    background-color: #bbb;
+    border-color: #999;
 }
 
+/* Styles specific to the .btn-primary */
 .signin_up .btn-primary {
     background-color: #233C63;
     border-color: #233C63;
-    width: 45%; 
-    padding: 0.5rem 1rem; 
 }
-/* 수정한 부분 */
 
 .signin_up .btn-primary:hover {
     background-color: #1a2d4b;
     border-color: #1a2d4b;
 }
 
-.signin_up .btn-outline-dark {
-    margin: 1rem .2rem;
-    border-color: #fff;
-    font-size: .9rem;
-}
-
 .signin_up .login_options {
     display: block;
-}
-
-.navbar {
-    margin:.5rem .5rem .5rem 1.5rem;
-}
-.navbar .container-fluid{
-    font-size: 20px;
-}
-
-.navbar .none-dropdown-icon .dropdown-toggle::after {
-    content: none;
-}
-
-.navbar .sm-text{
-    font-size:x-small;
-    font-weight: lighter;
-}
-.navbar .md-text{
-    font-size: 1em;
-    font-weight: lighter;
-    font-family: sans-serif;
-}
-
-
-.navbar .dropdown-menu {
-    font-weight: 100;
-    font-size: small;
-}
-
-.tooltip .tooltip-inner {
-    font-size: 5px;
 }
