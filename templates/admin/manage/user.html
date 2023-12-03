@@ -24,6 +24,7 @@
                         <th>사용자 이름</th>
                         <th>아이디</th>
                         <th>권한</th>
+                        <th>해시된 비밀번호</th>
                         <th>로그인 실패 횟수</th>
                         <th>마지막 로그인</th>
                         <th>회원가입 승인</th>
@@ -89,6 +90,7 @@
                         tableContent += "<td>" + user.user_name + "</td>";
                         tableContent += "<td>" + user.user_id + "</td>";
                         tableContent += "<td>" + user.role + "</td>";
+                        tableContent += "<td>" + user.hashed_pw + "</td>";
                         tableContent += "<td>" + user.fail_count + "</td>";
                         tableContent += "<td>" + (user.lastlogin ? user.lastlogin : "Not Logged In") + "</td>";
                         if (user.approved == true){

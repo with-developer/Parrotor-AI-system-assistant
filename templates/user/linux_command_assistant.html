@@ -30,6 +30,8 @@
   <link rel="stylesheet" href="https://unpkg.com/xterm@4.11.0/css/xterm.css"/>
   </head>
   <body>
+    <!-- <div id="toast-container" style="position: fixed; top: 10px; right: 10px; z-index: 1050;"></div> -->
+
     
     <div class="sidebar">
       {% include '/template/user_sidebar.html' %}
@@ -99,9 +101,6 @@
       messageDiv.style.borderRadius = "1rem"
       
       
-
-
-
       if (type === "user") {
         messageDiv.style.backgroundColor = "#FBFAEC";
         messageDiv.style.justifyContent = "right";
@@ -171,23 +170,67 @@
                     return true;
                 } else {
                     event.preventDefault();
-                    sendMessage();
+
+                    /* 정책 수정: 검사 위해 checkMessage()로 (원래 sendMessage) */
+                    checkMessage();
                 }
             }
         });
-
-        
+         
 
         $("#sendButton").on("click", function() {
-            sendMessage();
+            /* 정책 수정: 검사 위해 checkMessage()로 (원래 sendMessage) */
+            checkMessage();
         });
-        
-        function sendMessage() {
+
+        /*  정책 수정: 입력값 <-> 정책 검사 함수 추가  */ 
+        function checkMessage() {
             const message = $('#prompt-textarea').val().trim();
             if (!message) {
                 return;
             }
 
+            fetch('/API/check_input', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({input: message})
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.violation) {
+                    // 정책 위반 시 경고창을 띄움
+                    showToast('Linux 보안 위협 경고: 관리자에게 문의하세요');
+                }
+                // GPT-3의 응답과 상관없이 sendMessage 호출
+                sendMessage();
+            })
+            .catch(error => {
+                console.error("Error: ", error);
+                showToast('Error occurred'); // 오류 발생 시 경고창
+            });
+        }
+
+        // showToast method start
+        function showToast(message) {
+    const toast = $('<div class="toast" role="alert" aria-live="assertive" aria-atomic="true" data-delay="5000" style="width: 400px; height: 50px; background-color: red; color: white;">');
+    const toastBody = $('<div class="toast-body">').text(message);
+    toast.append(toastBody);
+    $('#toast-container').append(toast);
+    const bsToast = new bootstrap.Toast(toast);
+    bsToast.show();
+}
+
+
+        
+        
+        
+
+
+        function sendMessage() {
+            const message = $('#prompt-textarea').val().trim();
+            if (!message) {
+                return;
+            }
             addMessage("user", message);
             const chatHistoryDiv = document.querySelector("[chat-history]");
             const messageDiv = document.createElement("div");
@@ -242,6 +285,7 @@
                     chatHistoryDiv.scrollTop = chatHistoryDiv.scrollHeight;
                     
                     if (done) {
+                      console.log("done!");
                       const hasCodeBlock = messageTextDiv.innerHTML.includes("```");
                       if (hasCodeBlock) {
                           const codeContent = messageTextDiv.innerHTML.replace(/```sh?<br\s*\/?>\n?([\s\S]+?)<br\s*\/?>\n?```/g, (match, p1) => {
@@ -265,6 +309,7 @@
 
                     if (chunk) {
                         const decodedMessage = chunk.split(",").map(code => String.fromCharCode(code)).join("");
+                        console.log(decodedMessage)
                         messageTextDiv.innerText += decodedMessage;
                     }
                     stream();
@@ -279,6 +324,16 @@
             $('#prompt-textarea').val('');
         }
     });
+
+    // showToast method start
+    function showToast(message) {
+    const toast = $('<div class="toast" role="alert" aria-live="assertive" aria-atomic="true" data-delay="5000" style="width: 200px; height: 50px; background-color: red; color: white;">');
+    const toastBody = $('<div class="toast-body">').text(message);
+    toast.append(toastBody);
+    $('#toast-container').append(toast);
+    const bsToast = new bootstrap.Toast(toast);
+    bsToast.show();
+}
 
     
     addMessage("bot", "안녕하세요, 저는 당신의 리눅스 명령어 어시스턴트 Parrotor입니다. \n무엇을 도와드릴까요?");
@@ -305,11 +360,13 @@
     term.open(document.getElementById("terminal"));
     fit.fit();
     term.resize(14, 82);
+    // console.log(`size: ${term.cols} columns, ${term.rows} rows`);
     fit.fit();
     term.writeln("1. You can copy with ctrl+shift+x");
     term.writeln("2. You can paste with ctrl+shift+v");
     
     term.onData((data) => {
+      console.log("browser terminal received new data:", data);
       socket.emit("pty-input", { input: data });
     });
 
@@ -320,6 +377,7 @@
 
     
     socket.on("pty-output", function (data) {
+      console.log("new output received from server:", data.output);
       term.write(data.output);
     });
     
@@ -336,6 +394,7 @@
     function fitToscreen() {
       fit.fit();
       const dims = { cols: term.cols, rows: term.rows };
+      console.log("sending new dimensions to server's pty", dims);
       socket.emit("resize", dims);
       // socket.emit("pty-init","");
 

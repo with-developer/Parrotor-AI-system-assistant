@@ -111,10 +111,12 @@
 
             var tableContent = "";
             var index = 1 + (pageNumber - 1) * 10;
-            for (var userId in data.logs) {
+            var logKeys = Object.keys(data.logs).reverse(); // 로그 키 배열을 역순으로
+            logKeys.forEach(function(userId) {
                 var user = data.logs[userId];
                 var questionId = 'question-' + index;
                 var answerId = 'answer-' + index;
+
 
                 tableContent += "<tr>";
                 tableContent += "<td rowspan='2' style='vertical-align: middle; text-align: center;'>" + index + "</td>";
@@ -126,7 +128,8 @@
                 tableContent += "<td>" + (user.answer.length > max_length ? createMoreButton(user.answer, answerId) : user.answer) + "</td>";
                 tableContent += "</tr>";
                 index++;
-            }
+            });
+            
               var startEntry = (pageNumber - 1) * items_per_page + 1;
               var endEntry = Math.min(pageNumber * items_per_page, data.total_users);
               $("#startEntry").text(startEntry);

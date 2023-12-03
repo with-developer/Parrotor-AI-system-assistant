@@ -14,9 +14,21 @@ db = mongodb_connect()
 terminal_socket_blueprint = Blueprint('terminal_socket', __name__, url_prefix='/API/terminal')
 
 def set_winsize(fd, row, col, xpix=0, ypix=0):
-    print("setting window size with termios")
-    winsize = struct.pack("HHHH", row, col, xpix, ypix)
-    fcntl.ioctl(fd, termios.TIOCSWINSZ, winsize)
+    try:
+        print("setting window size with termios")
+        winsize = struct.pack("HHHH", row, col, xpix, ypix)
+        fcntl.ioctl(fd, termios.TIOCSWINSZ, winsize)
+    except ImportError:
+        try:
+            import win32console
+            import win32con
+            console = win32console.GetConsoleScreenBufferInfo().srWindow
+            console.Top = console.Left = 0
+            console.Bottom = row - 1
+            console.Right = col - 1
+            win32console.SetConsoleScreenBufferSize(console)
+        except ImportError:
+            print("Unable to import win32console. Please install pywin32.")
 
 
 def read_and_forward_ssh_output():
@@ -35,13 +47,6 @@ def pty_input(data):
     if global_app.config["ssh_channel"]:
         print("received input from browser: %s" % data["input"])
         global_app.config["ssh_channel"].send(data["input"])
-
-# @socketio.on("pty-init", namespace="/API/terminal/pty")
-# @check_verification(['user', 'admin'])
-# def pty_input(data):
-#     if global_app.config["ssh_channel"]:
-#         print("Init channel")
-#         global_app.config["ssh_channel"].send('\n')
 
 
 @socketio.on("resize", namespace="/API/terminal/pty")
