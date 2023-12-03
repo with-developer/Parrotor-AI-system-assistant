@@ -21,23 +21,11 @@ prompt_api_blueprint = Blueprint('prompt_api', __name__, url_prefix='/API/prompt
 @prompt_api_blueprint.route('', methods=['POST'])
 @check_verification(['user','admin'])
 def prompt_api():
-    """TODO
-    1. 전송된 데이터를 수신
-    2. openai API를 통해 질문 전송
-    3. 스트림 형태로 답변을 반환
-    """
     data = request.json
     message = data.get("message", "")
     serverId = data.get("serverId", "")
-    print("message:", message)
-    print("server id:",serverId)
 
-    
 
-    """TODO
-    if none이면 그대로 실행
-    값이 있다면 db에서 server info 불러와서 포함
-    """
     if serverId != "None":
         server_id_like = db.remote.find_one({'_id': ObjectId(serverId)})['server_info']['id_like']
         server_pretty_name = db.remote.find_one({'_id': ObjectId(serverId)})['server_info']['pretty_name']
@@ -59,7 +47,6 @@ Instructions:
 - Respond language: Korean
 """
 
-    print(prompt_content)
 
     messages = [
         {"role": "system", "content": "You are a useful Linux system engineer."},
@@ -95,44 +82,31 @@ Instructions:
         )
         combined_string = message + total_answer
 
-        # Step 2: Get all keys from db.commands
-        command_keys = db.commands.find_one()  # Assuming this returns a dictionary-like object
+        command_keys = db.commands.find_one()
 
-        # Removing non-command keys from command_keys, if necessary
-        # for example: command_keys.pop('_id', None)
-
-        # Step 3: Count the occurrences of each key in the combined string
         key_counts = Counter()
         for key in command_keys:
             key_counts[key] = len(re.findall(re.escape(key), combined_string))
 
-        # Step 4: Update db.commands with the new counts
         for key, count in key_counts.items():
             if count > 0:
-                # Increment the count of each command in the database
                 db.commands.update_one({'_id': command_keys['_id']}, {'$inc': {key: count}})
 
         command_level_updates = {f"command_level.{key}": count for key, count in key_counts.items()}
         db.account.update_one({"user_id": g.user_id}, {"$inc": command_level_updates})
         
-
-    
     return Response(stream_with_context(generate()), content_type='text/event-stream')
 
 
 
-# This Route: /API/prompt/
+# This Route: /API/prompt/security_assistant
 @prompt_api_blueprint.route('/security_assistant', methods=['POST'])
 @check_verification(['user','admin'])
 def security_prompt_api():
     data = request.json
-    print(data)
     message = data.get("message", "")
     serverId = data.get("serverId", "")
     policy_name = data.get("policy_name", "")
-    print("message:", message)
-    print("server id:",serverId)
-    print("policy_name:", policy_name)
 
     policy_classification = None
     policy_detail = None
@@ -148,15 +122,7 @@ def security_prompt_api():
         if policy_classification:
             break
 
-    print("policy_classification:", policy_classification)
-    print("policy_detail:", policy_detail)
 
-    
-
-    """TODO
-    if none이면 그대로 실행
-    값이 있다면 db에서 server info 불러와서 포함
-    """
     if serverId != "None":
         server_id_like = db.remote.find_one({'_id': ObjectId(serverId)})['server_info']['id_like']
         server_pretty_name = db.remote.find_one({'_id': ObjectId(serverId)})['server_info']['pretty_name']
@@ -180,8 +146,6 @@ Instructions:
 - Note 2: The environment in which you can enter commands is the CLI.
 - Respond language: Korean
 """
-
-    #print(prompt_content)
 
     messages = [
         {"role": "system", "content": "당신은 한국의 주요정보통신기반시설 취약점 진단 가이드라인에 대해 잘 알고있는 어시스턴트입니다."},
@@ -217,21 +181,14 @@ Instructions:
         )
         combined_string = message + total_answer
 
-        # Step 2: Get all keys from db.commands
-        command_keys = db.commands.find_one()  # Assuming this returns a dictionary-like object
+        command_keys = db.commands.find_one()
 
-        # Removing non-command keys from command_keys, if necessary
-        # for example: command_keys.pop('_id', None)
-
-        # Step 3: Count the occurrences of each key in the combined string
         key_counts = Counter()
         for key in command_keys:
             key_counts[key] = len(re.findall(re.escape(key), combined_string))
 
-        # Step 4: Update db.commands with the new counts
         for key, count in key_counts.items():
             if count > 0:
-                # Increment the count of each command in the database
                 db.commands.update_one({'_id': command_keys['_id']}, {'$inc': {key: count}})
         
 
