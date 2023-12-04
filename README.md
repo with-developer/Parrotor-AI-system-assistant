@@ -1,73 +1,64 @@
-# jirangobie Project
-지란고비 프로젝트
+# PARROTOR AI system assistant
 
-## 프로젝트 시작하기 
-1. Project Clone   
-1.1. Visual Studio Code 터미널창에서 아래 명령어 실행   
-   `git clone https://github.com/with-developer/jirangobie.git`   
+<div align="center">
+   <img src="https://github.com/with-developer/Parrotor-AI-system-assistant/assets/50432821/e96e13c3-8659-4db5-b68b-3523b3687563" width="300" height="300">
+</div>
 
-2. Python install   
-2.1. [Python 3.11.5 version install](https://www.python.org/downloads/windows/)   
-2.2. `python3 -V` 입력 시 Python 3.11.5 나오는지 확인   
+# 생성형 AI 리눅스 명령어/보안 어시스턴트 PARROTOR
+S-개발자 1기(2차) 보안 제품 개발 프로젝트  
+팀: 지란고비 (김서연, 김주미, 남윤정, 이지희, 이준형)  
+담당 멘토: 지란지교시큐리티 윤두식 대표님  
+프로젝트 기간: 23.09.25 ~ 23.12.04  
 
-3. Python venv setup   
-3.1. python3 -m venv venv   
-3.2. source venv/bin/activate   
+## 프로젝트 소개
+Openai-API의 GPT 모델을 통해 사용자들이 명령어와 보안 지식을 학습하고, 웹 기반 터미널을 통해 실제 서버에 명령어를 적용해봄으로서 주니어 엔지니어를 더 빠르게 성장시킬 수 있도록 하는 서비스입니다.  
+사용자는 하나의 인터페이스에서 질의응답 및 테스트 서버에서 명령어를 시뮬레이션 하면서 학습할 수 있으며,  
+관리자는 주니어 엔지니어들의 실력을 파악하여 업무 효율성을 높일 수 있습니다. 
 
-4. Project setup   
-4.1. `pip3 install -r requirements.txt` 실행하여 필수 라이브러리 다운로드   
-4.2. python3 app.py
+## 주요 기능 1 리눅스 명령어 어시스턴트
+![image](https://github.com/with-developer/Parrotor-AI-system-assistant/assets/50432821/c5d6abe8-001b-4404-ad97-bc45e9e69e32)
+
+## 주요 기능 2 리눅스 보안 어시스턴트
+![image](https://github.com/with-developer/Parrotor-AI-system-assistant/assets/50432821/c860c804-0e1e-425f-9fe8-3c7603464e44)
+
+## 전체 시연 영상
 
 
-## Git 협업 가이드 (작성중) 
-1. Github Main 브랜치 -> 본인 브랜치 코드 동기화 (다시 자세하게 작성할 예정)   
-
-2. [중요]각자 본인의 브랜치에서 코드 작성 후 commit & push 하기 (코드 컨플릭트 방지)   
-이름별로 총 5개의 브랜치를 만들어놨습니다.   
-브랜치 변경 방법: `git checkout remotes/origin/이름 -t`   
-브랜치 변경되었는지 확인하는 방법: `git status`
-    ```plaintext
-    On branch 이준형
-    Your branch is up to date with 'origin/이준형'.
-    ```
-    push 하는 방법: `git push origin 브랜치명`
-
-3. [중요]작업 시작하기 전 `git pull origin main` 명령어로 최신 코드 받은 뒤, 시작 (코드 컨플릭트 방지)   
-
-4. 커밋 메세지는 가능한 한글로 작성하기.
-5. 주석 꼼꼼하게 작성하기.
+## 서비스 아키텍처
+<img width="1374" alt="스크린샷 2023-12-04 오전 11 38 15" src="https://github.com/with-developer/Parrotor-AI-system-assistant/assets/50432821/c03e0d94-c3ac-4f67-b55d-1ad45857186c">
 
 
 
 
-## 디렉터리 구조 (9월26일 기준)
+
+
+---
+## 시작 가이드
+### Requirements
+Python 3.11.5   
+`pip3 install -r requirements.txt`  
+  
+  
+### Installation
+`git clone https://github.com/with-developer/Parrotor-AI-system-assistant.git`  
+  
+  
+### .env file setup
 ```
-├── README.md
-├── app.py   [Flask 기본 앱]
-├── requirements.txt   [Python 라이브러리 구성요소 모음]
-├── static   [Flask에서 Image, CSS, Javascript를 관리하는 디렉터리]
-│   ├── css   [CSS 디렉터리]
-│   │   └── bootstrap   [Bootstrap css 디렉터리]
-│   │       └── bootstrap.min.css   [Bootstrap css 파일] 
-│   └── js   [Javascript 디렉터리]
-│       └── bootstrap   [Bootstrap javascript 디렉터리]
-│           └── bootstrap.bundle.min.js   [Bootstrap javascript 파일]
-├── templates   [Flask에서 html 파일을 관리하는 디렉터리]
-│   ├── admin   [관리자가 접속할 수 있는 디렉터리]
-│   │   └── dashboard.html   [관리자용 대시보드]
-│   └── user   [일반 사용자가 접속할 수 있는 디렉터리]
-│       ├── dashboard.html   [일반 사용자용 대시보드]
-│       ├── signin.html   [로그인 페이지]
-│       └── signup.html   [회원가입 페이지]
-└── views
-    ├── API   [API 작업을 처리하기 위한 디렉터리]
-    │   └── account   [계정 관련 API 처리 디렉터리]
-    │       └── signup_api.py   [회원가입 API 파일]
-    ├── __init__.py   [필요 없어 보이지만, 필요한 파일..]
-    ├── admin   [관리자용 라우팅 디렉터리]
-    │   └── __init__.py   [필요 없어 보이지만, 필요한 파일..]
-    └── user   [사용자용 라우팅 디렉터리]
-        ├── __init__.py   [필요 없어 보이지만, 필요한 파일..]
-        ├── signin_view.py   [로그인 라우팅 파일]
-        └── signup_view.py   [회원가입 라우팅 파일]
-```
+mongo_server_ip='example'
+mongo_server_port='example'
+mongo_account_db='example'
+mongo_username = 'example'
+mongo_password = 'example'
+SECRET_KEY='example'
+openai_api_key='example'
+```  
+  
+  
+### Run
+```python3
+python3 -m venv venv
+source venv/bin/activate
+python3 app.py
+```  
+
